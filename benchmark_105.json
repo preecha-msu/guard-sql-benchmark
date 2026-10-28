@@ -1,0 +1,1052 @@
+[
+  {
+    "question_id": "Q001",
+    "domain": "D1_HR_SALES",
+    "category": "C1_3VL_NULL",
+    "variation": "V1_EN_Standard",
+    "language": "EN",
+    "is_seed_21": true,
+    "question": "Find all employees who do not manage anyone.",
+    "gold_sql": "SELECT a.emp_id, a.emp_name FROM employees a WHERE NOT EXISTS (SELECT 1 FROM employees sub WHERE sub.manager_id = a.emp_id);"
+  },
+  {
+    "question_id": "Q002",
+    "domain": "D1_HR_SALES",
+    "category": "C1_3VL_NULL",
+    "variation": "V2_EN_ParamShift",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Find employees with salary > 30000 who do not manage anyone.",
+    "gold_sql": "SELECT a.emp_id, a.emp_name FROM employees a WHERE a.salary > 30000 AND NOT EXISTS (SELECT 1 FROM employees sub WHERE sub.manager_id = a.emp_id);"
+  },
+  {
+    "question_id": "Q003",
+    "domain": "D1_HR_SALES",
+    "category": "C1_3VL_NULL",
+    "variation": "V3_EN_LexicalReorder",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Excluding supervisors, list every employee with zero reports.",
+    "gold_sql": "SELECT a.emp_id, a.emp_name FROM employees a WHERE NOT EXISTS (SELECT 1 FROM employees sub WHERE sub.manager_id = a.emp_id);"
+  },
+  {
+    "question_id": "Q004",
+    "domain": "D1_HR_SALES",
+    "category": "C1_3VL_NULL",
+    "variation": "V4_TH_Formal",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "จงค้นหาพนักงานที่ไม่ได้เป็นหัวหน้าของคนอื่นเลย",
+    "gold_sql": "SELECT a.emp_id, a.emp_name FROM employees a WHERE NOT EXISTS (SELECT 1 FROM employees sub WHERE sub.manager_id = a.emp_id);"
+  },
+  {
+    "question_id": "Q005",
+    "domain": "D1_HR_SALES",
+    "category": "C1_3VL_NULL",
+    "variation": "V5_TH_Idiomatic",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "ขอรายชื่อพนักงานที่ไม่มีลูกน้องในสังกัดเลย",
+    "gold_sql": "SELECT a.emp_id, a.emp_name FROM employees a WHERE NOT EXISTS (SELECT 1 FROM employees sub WHERE sub.manager_id = a.emp_id);"
+  },
+  {
+    "question_id": "Q006",
+    "domain": "D1_HR_SALES",
+    "category": "C2_CORRELATED_WIN",
+    "variation": "V1_EN_Standard",
+    "language": "EN",
+    "is_seed_21": true,
+    "question": "Find each employee's highest sales and difference from average.",
+    "gold_sql": "WITH R AS (SELECT emp_id, order_id, total_amount, AVG(total_amount) OVER (PARTITION BY emp_id) AS avg_a, ROW_NUMBER() OVER (PARTITION BY emp_id ORDER BY total_amount DESC, order_id ASC) AS rn FROM sales_orders) SELECT emp_id, order_id, total_amount AS max_val, total_amount - avg_a AS diff_avg FROM R WHERE rn = 1;"
+  },
+  {
+    "question_id": "Q007",
+    "domain": "D1_HR_SALES",
+    "category": "C2_CORRELATED_WIN",
+    "variation": "V2_EN_ParamShift",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Find each employee's lowest sales and difference from average.",
+    "gold_sql": "WITH R AS (SELECT emp_id, order_id, total_amount, AVG(total_amount) OVER (PARTITION BY emp_id) AS avg_a, ROW_NUMBER() OVER (PARTITION BY emp_id ORDER BY total_amount ASC, order_id ASC) AS rn FROM sales_orders) SELECT emp_id, order_id, total_amount AS max_val, total_amount - avg_a AS diff_avg FROM R WHERE rn = 1;"
+  },
+  {
+    "question_id": "Q008",
+    "domain": "D1_HR_SALES",
+    "category": "C2_CORRELATED_WIN",
+    "variation": "V3_EN_LexicalReorder",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Calculate the gap between average and top transaction (break ties by ID).",
+    "gold_sql": "WITH R AS (SELECT emp_id, order_id, total_amount, AVG(total_amount) OVER (PARTITION BY emp_id) AS avg_a, ROW_NUMBER() OVER (PARTITION BY emp_id ORDER BY total_amount DESC, order_id ASC) AS rn FROM sales_orders) SELECT emp_id, order_id, total_amount AS max_val, total_amount - avg_a AS diff_avg FROM R WHERE rn = 1;"
+  },
+  {
+    "question_id": "Q009",
+    "domain": "D1_HR_SALES",
+    "category": "C2_CORRELATED_WIN",
+    "variation": "V4_TH_Formal",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "หารายการยอดขายสูงสุดของแต่ละคน พร้อมผลต่างจากค่าเฉลี่ย",
+    "gold_sql": "WITH R AS (SELECT emp_id, order_id, total_amount, AVG(total_amount) OVER (PARTITION BY emp_id) AS avg_a, ROW_NUMBER() OVER (PARTITION BY emp_id ORDER BY total_amount DESC, order_id ASC) AS rn FROM sales_orders) SELECT emp_id, order_id, total_amount AS max_val, total_amount - avg_a AS diff_avg FROM R WHERE rn = 1;"
+  },
+  {
+    "question_id": "Q010",
+    "domain": "D1_HR_SALES",
+    "category": "C2_CORRELATED_WIN",
+    "variation": "V5_TH_Idiomatic",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "ดึงบิลยอดขายยอดสูงสุดคนละ 1 ใบเทียบค่าเฉลี่ยตัวเอง",
+    "gold_sql": "WITH R AS (SELECT emp_id, order_id, total_amount, AVG(total_amount) OVER (PARTITION BY emp_id) AS avg_a, ROW_NUMBER() OVER (PARTITION BY emp_id ORDER BY total_amount DESC, order_id ASC) AS rn FROM sales_orders) SELECT emp_id, order_id, total_amount AS max_val, total_amount - avg_a AS diff_avg FROM R WHERE rn = 1;"
+  },
+  {
+    "question_id": "Q011",
+    "domain": "D1_HR_SALES",
+    "category": "C3_RELATIONAL_DIV",
+    "variation": "V1_EN_Standard",
+    "language": "EN",
+    "is_seed_21": true,
+    "question": "Find non-empty departments where EVERY member holds ALL mandatory skills.",
+    "gold_sql": "SELECT g.dept_id, g.dept_name FROM departments g WHERE EXISTS (SELECT 1 FROM employees a WHERE a.dept_id = g.dept_id) AND NOT EXISTS (SELECT 1 FROM employees a WHERE a.dept_id = g.dept_id AND EXISTS (SELECT 1 FROM skills r WHERE r.is_mandatory = 1 AND NOT EXISTS (SELECT 1 FROM emp_skills b WHERE b.emp_id = a.emp_id AND b.skill_id = r.skill_id)));"
+  },
+  {
+    "question_id": "Q012",
+    "domain": "D1_HR_SALES",
+    "category": "C3_RELATIONAL_DIV",
+    "variation": "V2_EN_ParamShift",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "List active departments where 100% of members hold all mandatory skills.",
+    "gold_sql": "SELECT g.dept_id, g.dept_name FROM departments g WHERE EXISTS (SELECT 1 FROM employees a WHERE a.dept_id = g.dept_id) AND NOT EXISTS (SELECT 1 FROM employees a WHERE a.dept_id = g.dept_id AND EXISTS (SELECT 1 FROM skills r WHERE r.is_mandatory = 1 AND NOT EXISTS (SELECT 1 FROM emp_skills b WHERE b.emp_id = a.emp_id AND b.skill_id = r.skill_id)));"
+  },
+  {
+    "question_id": "Q013",
+    "domain": "D1_HR_SALES",
+    "category": "C3_RELATIONAL_DIV",
+    "variation": "V3_EN_LexicalReorder",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Where no member is missing any mandatory skills, return the department.",
+    "gold_sql": "SELECT g.dept_id, g.dept_name FROM departments g WHERE EXISTS (SELECT 1 FROM employees a WHERE a.dept_id = g.dept_id) AND NOT EXISTS (SELECT 1 FROM employees a WHERE a.dept_id = g.dept_id AND EXISTS (SELECT 1 FROM skills r WHERE r.is_mandatory = 1 AND NOT EXISTS (SELECT 1 FROM emp_skills b WHERE b.emp_id = a.emp_id AND b.skill_id = r.skill_id)));"
+  },
+  {
+    "question_id": "Q014",
+    "domain": "D1_HR_SALES",
+    "category": "C3_RELATIONAL_DIV",
+    "variation": "V4_TH_Formal",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "จงหาแผนกที่มีคนอยู่และทุกคนผ่านทักษะบังคับครบทุกตัว",
+    "gold_sql": "SELECT g.dept_id, g.dept_name FROM departments g WHERE EXISTS (SELECT 1 FROM employees a WHERE a.dept_id = g.dept_id) AND NOT EXISTS (SELECT 1 FROM employees a WHERE a.dept_id = g.dept_id AND EXISTS (SELECT 1 FROM skills r WHERE r.is_mandatory = 1 AND NOT EXISTS (SELECT 1 FROM emp_skills b WHERE b.emp_id = a.emp_id AND b.skill_id = r.skill_id)));"
+  },
+  {
+    "question_id": "Q015",
+    "domain": "D1_HR_SALES",
+    "category": "C3_RELATIONAL_DIV",
+    "variation": "V5_TH_Idiomatic",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "มีแผนกไหนที่คนข้างในเก็บทักษะบังคับครบทุกตัวโดยไม่เอาแผนกร้าง",
+    "gold_sql": "SELECT g.dept_id, g.dept_name FROM departments g WHERE EXISTS (SELECT 1 FROM employees a WHERE a.dept_id = g.dept_id) AND NOT EXISTS (SELECT 1 FROM employees a WHERE a.dept_id = g.dept_id AND EXISTS (SELECT 1 FROM skills r WHERE r.is_mandatory = 1 AND NOT EXISTS (SELECT 1 FROM emp_skills b WHERE b.emp_id = a.emp_id AND b.skill_id = r.skill_id)));"
+  },
+  {
+    "question_id": "Q016",
+    "domain": "D1_HR_SALES",
+    "category": "C4_GRANULARITY_FAN",
+    "variation": "V1_EN_Standard",
+    "language": "EN",
+    "is_seed_21": true,
+    "question": "Find employees with 2025 sales > quota and certs > department average.",
+    "gold_sql": "WITH T AS (SELECT emp_id, SUM(total_amount) AS tot FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' GROUP BY emp_id), C AS (SELECT a.emp_id, a.dept_id, COUNT(b.skill_id) AS cnt FROM employees a LEFT JOIN emp_skills b ON a.emp_id = b.emp_id GROUP BY a.emp_id, a.dept_id), A AS (SELECT emp_id, cnt, AVG(cnt * 1.0) OVER (PARTITION BY dept_id) AS g_avg FROM C) SELECT a.emp_id, a.emp_name, t.tot FROM employees a JOIN T t ON a.emp_id = t.emp_id JOIN sales_targets q ON a.emp_id = q.emp_id AND q.target_year = 2025 JOIN A ag ON a.emp_id = ag.emp_id WHERE t.tot > q.target_amount AND ag.cnt > ag.g_avg;"
+  },
+  {
+    "question_id": "Q017",
+    "domain": "D1_HR_SALES",
+    "category": "C4_GRANULARITY_FAN",
+    "variation": "V2_EN_ParamShift",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Find employees with 2025 sales >= quota and certs > department average.",
+    "gold_sql": "WITH T AS (SELECT emp_id, SUM(total_amount) AS tot FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' GROUP BY emp_id), C AS (SELECT a.emp_id, a.dept_id, COUNT(b.skill_id) AS cnt FROM employees a LEFT JOIN emp_skills b ON a.emp_id = b.emp_id GROUP BY a.emp_id, a.dept_id), A AS (SELECT emp_id, cnt, AVG(cnt * 1.0) OVER (PARTITION BY dept_id) AS g_avg FROM C) SELECT a.emp_id, a.emp_name, t.tot FROM employees a JOIN T t ON a.emp_id = t.emp_id JOIN sales_targets q ON a.emp_id = q.emp_id AND q.target_year = 2025 JOIN A ag ON a.emp_id = ag.emp_id WHERE t.tot >= q.target_amount AND ag.cnt > ag.g_avg;"
+  },
+  {
+    "question_id": "Q018",
+    "domain": "D1_HR_SALES",
+    "category": "C4_GRANULARITY_FAN",
+    "variation": "V3_EN_LexicalReorder",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Among those with above-average certs, list those beating their 2025 quota.",
+    "gold_sql": "WITH T AS (SELECT emp_id, SUM(total_amount) AS tot FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' GROUP BY emp_id), C AS (SELECT a.emp_id, a.dept_id, COUNT(b.skill_id) AS cnt FROM employees a LEFT JOIN emp_skills b ON a.emp_id = b.emp_id GROUP BY a.emp_id, a.dept_id), A AS (SELECT emp_id, cnt, AVG(cnt * 1.0) OVER (PARTITION BY dept_id) AS g_avg FROM C) SELECT a.emp_id, a.emp_name, t.tot FROM employees a JOIN T t ON a.emp_id = t.emp_id JOIN sales_targets q ON a.emp_id = q.emp_id AND q.target_year = 2025 JOIN A ag ON a.emp_id = ag.emp_id WHERE t.tot > q.target_amount AND ag.cnt > ag.g_avg;"
+  },
+  {
+    "question_id": "Q019",
+    "domain": "D1_HR_SALES",
+    "category": "C4_GRANULARITY_FAN",
+    "variation": "V4_TH_Formal",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "หาพนักงานที่ยอดปี 2025 สูงกว่าเป้าและมีใบรับรองเกินค่าเฉลี่ยแผนก",
+    "gold_sql": "WITH T AS (SELECT emp_id, SUM(total_amount) AS tot FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' GROUP BY emp_id), C AS (SELECT a.emp_id, a.dept_id, COUNT(b.skill_id) AS cnt FROM employees a LEFT JOIN emp_skills b ON a.emp_id = b.emp_id GROUP BY a.emp_id, a.dept_id), A AS (SELECT emp_id, cnt, AVG(cnt * 1.0) OVER (PARTITION BY dept_id) AS g_avg FROM C) SELECT a.emp_id, a.emp_name, t.tot FROM employees a JOIN T t ON a.emp_id = t.emp_id JOIN sales_targets q ON a.emp_id = q.emp_id AND q.target_year = 2025 JOIN A ag ON a.emp_id = ag.emp_id WHERE t.tot > q.target_amount AND ag.cnt > ag.g_avg;"
+  },
+  {
+    "question_id": "Q020",
+    "domain": "D1_HR_SALES",
+    "category": "C4_GRANULARITY_FAN",
+    "variation": "V5_TH_Idiomatic",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "ใครทำยอดปี 2025 ทะลุเป้าแถมมีใบรับรองเยอะกว่าค่าเฉลี่ยคนในแผนกตัวเอง",
+    "gold_sql": "WITH T AS (SELECT emp_id, SUM(total_amount) AS tot FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' GROUP BY emp_id), C AS (SELECT a.emp_id, a.dept_id, COUNT(b.skill_id) AS cnt FROM employees a LEFT JOIN emp_skills b ON a.emp_id = b.emp_id GROUP BY a.emp_id, a.dept_id), A AS (SELECT emp_id, cnt, AVG(cnt * 1.0) OVER (PARTITION BY dept_id) AS g_avg FROM C) SELECT a.emp_id, a.emp_name, t.tot FROM employees a JOIN T t ON a.emp_id = t.emp_id JOIN sales_targets q ON a.emp_id = q.emp_id AND q.target_year = 2025 JOIN A ag ON a.emp_id = ag.emp_id WHERE t.tot > q.target_amount AND ag.cnt > ag.g_avg;"
+  },
+  {
+    "question_id": "Q021",
+    "domain": "D1_HR_SALES",
+    "category": "C5_DEEP_SCOPE",
+    "variation": "V1_EN_Standard",
+    "language": "EN",
+    "is_seed_21": true,
+    "question": "Find employees with salary > department avg in top-performing departments.",
+    "gold_sql": "WITH GT AS (SELECT g.dept_id, COALESCE(SUM(t.total_amount), 0) AS g_tot FROM departments g LEFT JOIN employees a ON g.dept_id = a.dept_id LEFT JOIN sales_orders t ON a.emp_id = t.emp_id AND t.order_date >= '2025-01-01' AND t.order_date < '2026-01-01' GROUP BY g.dept_id), AP AS (SELECT emp_id, emp_name, dept_id, salary, AVG(salary) OVER (PARTITION BY dept_id) AS avg_p FROM employees) SELECT emp_id, emp_name, dept_id, salary FROM AP WHERE dept_id IN (SELECT dept_id FROM GT WHERE g_tot > (SELECT AVG(g_tot) FROM GT)) AND salary > avg_p;"
+  },
+  {
+    "question_id": "Q022",
+    "domain": "D1_HR_SALES",
+    "category": "C5_DEEP_SCOPE",
+    "variation": "V2_EN_ParamShift",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Find employees with salary < department avg in top-performing departments.",
+    "gold_sql": "WITH GT AS (SELECT g.dept_id, COALESCE(SUM(t.total_amount), 0) AS g_tot FROM departments g LEFT JOIN employees a ON g.dept_id = a.dept_id LEFT JOIN sales_orders t ON a.emp_id = t.emp_id AND t.order_date >= '2025-01-01' AND t.order_date < '2026-01-01' GROUP BY g.dept_id), AP AS (SELECT emp_id, emp_name, dept_id, salary, AVG(salary) OVER (PARTITION BY dept_id) AS avg_p FROM employees) SELECT emp_id, emp_name, dept_id, salary FROM AP WHERE dept_id IN (SELECT dept_id FROM GT WHERE g_tot > (SELECT AVG(g_tot) FROM GT)) AND salary < avg_p;"
+  },
+  {
+    "question_id": "Q023",
+    "domain": "D1_HR_SALES",
+    "category": "C5_DEEP_SCOPE",
+    "variation": "V3_EN_LexicalReorder",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "In departments beating the company 2025 average, list above-average earners.",
+    "gold_sql": "WITH GT AS (SELECT g.dept_id, COALESCE(SUM(t.total_amount), 0) AS g_tot FROM departments g LEFT JOIN employees a ON g.dept_id = a.dept_id LEFT JOIN sales_orders t ON a.emp_id = t.emp_id AND t.order_date >= '2025-01-01' AND t.order_date < '2026-01-01' GROUP BY g.dept_id), AP AS (SELECT emp_id, emp_name, dept_id, salary, AVG(salary) OVER (PARTITION BY dept_id) AS avg_p FROM employees) SELECT emp_id, emp_name, dept_id, salary FROM AP WHERE dept_id IN (SELECT dept_id FROM GT WHERE g_tot > (SELECT AVG(g_tot) FROM GT)) AND salary > avg_p;"
+  },
+  {
+    "question_id": "Q024",
+    "domain": "D1_HR_SALES",
+    "category": "C5_DEEP_SCOPE",
+    "variation": "V4_TH_Formal",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "หาผู้ที่มีเงินเดือนเกินค่าเฉลี่ยแผนก เฉพาะในแผนกที่ยอดสูงกว่าค่าเฉลี่ยองค์กร",
+    "gold_sql": "WITH GT AS (SELECT g.dept_id, COALESCE(SUM(t.total_amount), 0) AS g_tot FROM departments g LEFT JOIN employees a ON g.dept_id = a.dept_id LEFT JOIN sales_orders t ON a.emp_id = t.emp_id AND t.order_date >= '2025-01-01' AND t.order_date < '2026-01-01' GROUP BY g.dept_id), AP AS (SELECT emp_id, emp_name, dept_id, salary, AVG(salary) OVER (PARTITION BY dept_id) AS avg_p FROM employees) SELECT emp_id, emp_name, dept_id, salary FROM AP WHERE dept_id IN (SELECT dept_id FROM GT WHERE g_tot > (SELECT AVG(g_tot) FROM GT)) AND salary > avg_p;"
+  },
+  {
+    "question_id": "Q025",
+    "domain": "D1_HR_SALES",
+    "category": "C5_DEEP_SCOPE",
+    "variation": "V5_TH_Idiomatic",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "คัดเฉพาะแผนกที่ยอดชนะค่าเฉลี่ยบริษัท แล้วดูว่าใครได้เงินเดือนเกินค่าเฉลี่ยแผนก",
+    "gold_sql": "WITH GT AS (SELECT g.dept_id, COALESCE(SUM(t.total_amount), 0) AS g_tot FROM departments g LEFT JOIN employees a ON g.dept_id = a.dept_id LEFT JOIN sales_orders t ON a.emp_id = t.emp_id AND t.order_date >= '2025-01-01' AND t.order_date < '2026-01-01' GROUP BY g.dept_id), AP AS (SELECT emp_id, emp_name, dept_id, salary, AVG(salary) OVER (PARTITION BY dept_id) AS avg_p FROM employees) SELECT emp_id, emp_name, dept_id, salary FROM AP WHERE dept_id IN (SELECT dept_id FROM GT WHERE g_tot > (SELECT AVG(g_tot) FROM GT)) AND salary > avg_p;"
+  },
+  {
+    "question_id": "Q026",
+    "domain": "D1_HR_SALES",
+    "category": "C6_CASE_WHEN_ORDER",
+    "variation": "V1_EN_Standard",
+    "language": "EN",
+    "is_seed_21": true,
+    "question": "Classify tier: 'Achiever' if >= 50000; 'Top Star' if >= 100000 & all certs.",
+    "gold_sql": "WITH M AS (SELECT a.emp_id, a.emp_name, COALESCE((SELECT SUM(t.total_amount) FROM sales_orders t WHERE t.emp_id = a.emp_id AND t.order_date >= '2025-01-01' AND t.order_date < '2026-01-01'), 0) AS s25, CASE WHEN NOT EXISTS (SELECT 1 FROM skills r WHERE r.is_mandatory = 1 AND NOT EXISTS (SELECT 1 FROM emp_skills b WHERE b.emp_id = a.emp_id AND b.skill_id = r.skill_id)) THEN 1 ELSE 0 END AS all_m FROM employees a) SELECT emp_id, emp_name, CASE WHEN s25 >= 100000 AND all_m = 1 THEN 'Top Star' WHEN s25 >= 50000 THEN 'Achiever' ELSE 'Needs Improvement' END AS tier FROM M;"
+  },
+  {
+    "question_id": "Q027",
+    "domain": "D1_HR_SALES",
+    "category": "C6_CASE_WHEN_ORDER",
+    "variation": "V2_EN_ParamShift",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Classify tier: 'Achiever' if >= 40000; 'Top Star' if >= 90000 & all certs.",
+    "gold_sql": "WITH M AS (SELECT a.emp_id, a.emp_name, COALESCE((SELECT SUM(t.total_amount) FROM sales_orders t WHERE t.emp_id = a.emp_id AND t.order_date >= '2025-01-01' AND t.order_date < '2026-01-01'), 0) AS s25, CASE WHEN NOT EXISTS (SELECT 1 FROM skills r WHERE r.is_mandatory = 1 AND NOT EXISTS (SELECT 1 FROM emp_skills b WHERE b.emp_id = a.emp_id AND b.skill_id = r.skill_id)) THEN 1 ELSE 0 END AS all_m FROM employees a) SELECT emp_id, emp_name, CASE WHEN s25 >= 90000 AND all_m = 1 THEN 'Top Star' WHEN s25 >= 40000 THEN 'Achiever' ELSE 'Needs Improvement' END AS tier FROM M;"
+  },
+  {
+    "question_id": "Q028",
+    "domain": "D1_HR_SALES",
+    "category": "C6_CASE_WHEN_ORDER",
+    "variation": "V3_EN_LexicalReorder",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Assign 'Needs Improvement' if < 50000, 'Achiever' if >= 50000, or 'Top Star'.",
+    "gold_sql": "WITH M AS (SELECT a.emp_id, a.emp_name, COALESCE((SELECT SUM(t.total_amount) FROM sales_orders t WHERE t.emp_id = a.emp_id AND t.order_date >= '2025-01-01' AND t.order_date < '2026-01-01'), 0) AS s25, CASE WHEN NOT EXISTS (SELECT 1 FROM skills r WHERE r.is_mandatory = 1 AND NOT EXISTS (SELECT 1 FROM emp_skills b WHERE b.emp_id = a.emp_id AND b.skill_id = r.skill_id)) THEN 1 ELSE 0 END AS all_m FROM employees a) SELECT emp_id, emp_name, CASE WHEN s25 >= 100000 AND all_m = 1 THEN 'Top Star' WHEN s25 >= 50000 THEN 'Achiever' ELSE 'Needs Improvement' END AS tier FROM M;"
+  },
+  {
+    "question_id": "Q029",
+    "domain": "D1_HR_SALES",
+    "category": "C6_CASE_WHEN_ORDER",
+    "variation": "V4_TH_Formal",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "จัดระดับปี 2025: ตั้งแต่ 50000 เป็น 'Achiever' ถ้าถึง 100000 และครบเกณฑ์เป็น 'Top Star'",
+    "gold_sql": "WITH M AS (SELECT a.emp_id, a.emp_name, COALESCE((SELECT SUM(t.total_amount) FROM sales_orders t WHERE t.emp_id = a.emp_id AND t.order_date >= '2025-01-01' AND t.order_date < '2026-01-01'), 0) AS s25, CASE WHEN NOT EXISTS (SELECT 1 FROM skills r WHERE r.is_mandatory = 1 AND NOT EXISTS (SELECT 1 FROM emp_skills b WHERE b.emp_id = a.emp_id AND b.skill_id = r.skill_id)) THEN 1 ELSE 0 END AS all_m FROM employees a) SELECT emp_id, emp_name, CASE WHEN s25 >= 100000 AND all_m = 1 THEN 'Top Star' WHEN s25 >= 50000 THEN 'Achiever' ELSE 'Needs Improvement' END AS tier FROM M;"
+  },
+  {
+    "question_id": "Q030",
+    "domain": "D1_HR_SALES",
+    "category": "C6_CASE_WHEN_ORDER",
+    "variation": "V5_TH_Idiomatic",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "แบ่งเกรดปี 2025 ถ้าแตะ 50000 ให้ 'Achiever' ถ้าทะลุ 100000 และเกณฑ์ครบให้ 'Top Star'",
+    "gold_sql": "WITH M AS (SELECT a.emp_id, a.emp_name, COALESCE((SELECT SUM(t.total_amount) FROM sales_orders t WHERE t.emp_id = a.emp_id AND t.order_date >= '2025-01-01' AND t.order_date < '2026-01-01'), 0) AS s25, CASE WHEN NOT EXISTS (SELECT 1 FROM skills r WHERE r.is_mandatory = 1 AND NOT EXISTS (SELECT 1 FROM emp_skills b WHERE b.emp_id = a.emp_id AND b.skill_id = r.skill_id)) THEN 1 ELSE 0 END AS all_m FROM employees a) SELECT emp_id, emp_name, CASE WHEN s25 >= 100000 AND all_m = 1 THEN 'Top Star' WHEN s25 >= 50000 THEN 'Achiever' ELSE 'Needs Improvement' END AS tier FROM M;"
+  },
+  {
+    "question_id": "Q031",
+    "domain": "D1_HR_SALES",
+    "category": "C7_IIF_NVL_DIALECT",
+    "variation": "V1_EN_Standard",
+    "language": "EN",
+    "is_seed_21": true,
+    "question": "Compute xmoney (10% bonus if > quota) and showcost (salary + xmoney for bosses).",
+    "gold_sql": "WITH M AS (SELECT a.emp_id, a.emp_name, a.salary, COALESCE((SELECT SUM(t.total_amount) FROM sales_orders t WHERE t.emp_id = a.emp_id AND t.order_date >= '2025-01-01' AND t.order_date < '2026-01-01'), 0) AS s25, (SELECT q.target_amount FROM sales_targets q WHERE q.emp_id = a.emp_id AND q.target_year = 2025) AS q25, EXISTS (SELECT 1 FROM employees sub WHERE sub.manager_id = a.emp_id) AS is_b FROM employees a), B AS (SELECT *, CASE WHEN q25 IS NOT NULL AND s25 > q25 THEN s25 * 0.10 ELSE 0.0 END AS xmoney FROM M) SELECT emp_id, emp_name, xmoney, COALESCE(CASE WHEN is_b THEN salary + xmoney ELSE NULL END, salary) AS showcost FROM B;"
+  },
+  {
+    "question_id": "Q032",
+    "domain": "D1_HR_SALES",
+    "category": "C7_IIF_NVL_DIALECT",
+    "variation": "V2_EN_ParamShift",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Compute xmoney (15% bonus if > quota) and showcost (salary + xmoney for bosses).",
+    "gold_sql": "WITH M AS (SELECT a.emp_id, a.emp_name, a.salary, COALESCE((SELECT SUM(t.total_amount) FROM sales_orders t WHERE t.emp_id = a.emp_id AND t.order_date >= '2025-01-01' AND t.order_date < '2026-01-01'), 0) AS s25, (SELECT q.target_amount FROM sales_targets q WHERE q.emp_id = a.emp_id AND q.target_year = 2025) AS q25, EXISTS (SELECT 1 FROM employees sub WHERE sub.manager_id = a.emp_id) AS is_b FROM employees a), B AS (SELECT *, CASE WHEN q25 IS NOT NULL AND s25 > q25 THEN s25 * 0.15 ELSE 0.0 END AS xmoney FROM M) SELECT emp_id, emp_name, xmoney, COALESCE(CASE WHEN is_b THEN salary + xmoney ELSE NULL END, salary) AS showcost FROM B;"
+  },
+  {
+    "question_id": "Q033",
+    "domain": "D1_HR_SALES",
+    "category": "C7_IIF_NVL_DIALECT",
+    "variation": "V3_EN_LexicalReorder",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Return showcost and xmoney using NULL fallback for non-supervisors.",
+    "gold_sql": "WITH M AS (SELECT a.emp_id, a.emp_name, a.salary, COALESCE((SELECT SUM(t.total_amount) FROM sales_orders t WHERE t.emp_id = a.emp_id AND t.order_date >= '2025-01-01' AND t.order_date < '2026-01-01'), 0) AS s25, (SELECT q.target_amount FROM sales_targets q WHERE q.emp_id = a.emp_id AND q.target_year = 2025) AS q25, EXISTS (SELECT 1 FROM employees sub WHERE sub.manager_id = a.emp_id) AS is_b FROM employees a), B AS (SELECT *, CASE WHEN q25 IS NOT NULL AND s25 > q25 THEN s25 * 0.10 ELSE 0.0 END AS xmoney FROM M) SELECT emp_id, emp_name, xmoney, COALESCE(CASE WHEN is_b THEN salary + xmoney ELSE NULL END, salary) AS showcost FROM B;"
+  },
+  {
+    "question_id": "Q034",
+    "domain": "D1_HR_SALES",
+    "category": "C7_IIF_NVL_DIALECT",
+    "variation": "V4_TH_Formal",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "แสดง xmoney (10% หากเกินเป้า) และ showcost (หากมีลูกน้องให้บวก xmoney หากไม่มีใช้ค่าเริ่มต้น)",
+    "gold_sql": "WITH M AS (SELECT a.emp_id, a.emp_name, a.salary, COALESCE((SELECT SUM(t.total_amount) FROM sales_orders t WHERE t.emp_id = a.emp_id AND t.order_date >= '2025-01-01' AND t.order_date < '2026-01-01'), 0) AS s25, (SELECT q.target_amount FROM sales_targets q WHERE q.emp_id = a.emp_id AND q.target_year = 2025) AS q25, EXISTS (SELECT 1 FROM employees sub WHERE sub.manager_id = a.emp_id) AS is_b FROM employees a), B AS (SELECT *, CASE WHEN q25 IS NOT NULL AND s25 > q25 THEN s25 * 0.10 ELSE 0.0 END AS xmoney FROM M) SELECT emp_id, emp_name, xmoney, COALESCE(CASE WHEN is_b THEN salary + xmoney ELSE NULL END, salary) AS showcost FROM B;"
+  },
+  {
+    "question_id": "Q035",
+    "domain": "D1_HR_SALES",
+    "category": "C7_IIF_NVL_DIALECT",
+    "variation": "V5_TH_Idiomatic",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "คำนวณ xmoney 10% คนทะลุเป้า และ showcost ถ้าเป็นหัวหน้าให้บวก xmoney ถ้าไม่ใช่ให้ใช้เงินตั้งต้น",
+    "gold_sql": "WITH M AS (SELECT a.emp_id, a.emp_name, a.salary, COALESCE((SELECT SUM(t.total_amount) FROM sales_orders t WHERE t.emp_id = a.emp_id AND t.order_date >= '2025-01-01' AND t.order_date < '2026-01-01'), 0) AS s25, (SELECT q.target_amount FROM sales_targets q WHERE q.emp_id = a.emp_id AND q.target_year = 2025) AS q25, EXISTS (SELECT 1 FROM employees sub WHERE sub.manager_id = a.emp_id) AS is_b FROM employees a), B AS (SELECT *, CASE WHEN q25 IS NOT NULL AND s25 > q25 THEN s25 * 0.10 ELSE 0.0 END AS xmoney FROM M) SELECT emp_id, emp_name, xmoney, COALESCE(CASE WHEN is_b THEN salary + xmoney ELSE NULL END, salary) AS showcost FROM B;"
+  },
+  {
+    "question_id": "Q036",
+    "domain": "D2_HEALTHCARE",
+    "category": "C1_3VL_NULL",
+    "variation": "V1_EN_Standard",
+    "language": "EN",
+    "is_seed_21": true,
+    "question": "Find all doctors who do not supervise anyone.",
+    "gold_sql": "SELECT a.doc_id, a.doc_name FROM doctors a WHERE NOT EXISTS (SELECT 1 FROM doctors sub WHERE sub.supervisor_id = a.doc_id);"
+  },
+  {
+    "question_id": "Q037",
+    "domain": "D2_HEALTHCARE",
+    "category": "C1_3VL_NULL",
+    "variation": "V2_EN_ParamShift",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Find doctors with base fee > 30000 who do not supervise anyone.",
+    "gold_sql": "SELECT a.doc_id, a.doc_name FROM doctors a WHERE a.base_fee > 30000 AND NOT EXISTS (SELECT 1 FROM doctors sub WHERE sub.supervisor_id = a.doc_id);"
+  },
+  {
+    "question_id": "Q038",
+    "domain": "D2_HEALTHCARE",
+    "category": "C1_3VL_NULL",
+    "variation": "V3_EN_LexicalReorder",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Excluding supervisors, list every doctor with zero reports.",
+    "gold_sql": "SELECT a.doc_id, a.doc_name FROM doctors a WHERE NOT EXISTS (SELECT 1 FROM doctors sub WHERE sub.supervisor_id = a.doc_id);"
+  },
+  {
+    "question_id": "Q039",
+    "domain": "D2_HEALTHCARE",
+    "category": "C1_3VL_NULL",
+    "variation": "V4_TH_Formal",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "จงค้นหาแพทย์ที่ไม่ได้เป็นอาจารย์คุมคนอื่นเลย",
+    "gold_sql": "SELECT a.doc_id, a.doc_name FROM doctors a WHERE NOT EXISTS (SELECT 1 FROM doctors sub WHERE sub.supervisor_id = a.doc_id);"
+  },
+  {
+    "question_id": "Q040",
+    "domain": "D2_HEALTHCARE",
+    "category": "C1_3VL_NULL",
+    "variation": "V5_TH_Idiomatic",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "ขอรายชื่อแพทย์ที่ไม่มีลูกน้องในสังกัดเลย",
+    "gold_sql": "SELECT a.doc_id, a.doc_name FROM doctors a WHERE NOT EXISTS (SELECT 1 FROM doctors sub WHERE sub.supervisor_id = a.doc_id);"
+  },
+  {
+    "question_id": "Q041",
+    "domain": "D2_HEALTHCARE",
+    "category": "C2_CORRELATED_WIN",
+    "variation": "V1_EN_Standard",
+    "language": "EN",
+    "is_seed_21": true,
+    "question": "Find each doctor's highest treatment billing and difference from average.",
+    "gold_sql": "WITH R AS (SELECT doc_id, treat_id, bill_amount, AVG(bill_amount) OVER (PARTITION BY doc_id) AS avg_a, ROW_NUMBER() OVER (PARTITION BY doc_id ORDER BY bill_amount DESC, treat_id ASC) AS rn FROM treatments) SELECT doc_id, treat_id, bill_amount AS max_val, bill_amount - avg_a AS diff_avg FROM R WHERE rn = 1;"
+  },
+  {
+    "question_id": "Q042",
+    "domain": "D2_HEALTHCARE",
+    "category": "C2_CORRELATED_WIN",
+    "variation": "V2_EN_ParamShift",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Find each doctor's lowest treatment billing and difference from average.",
+    "gold_sql": "WITH R AS (SELECT doc_id, treat_id, bill_amount, AVG(bill_amount) OVER (PARTITION BY doc_id) AS avg_a, ROW_NUMBER() OVER (PARTITION BY doc_id ORDER BY bill_amount ASC, treat_id ASC) AS rn FROM treatments) SELECT doc_id, treat_id, bill_amount AS max_val, bill_amount - avg_a AS diff_avg FROM R WHERE rn = 1;"
+  },
+  {
+    "question_id": "Q043",
+    "domain": "D2_HEALTHCARE",
+    "category": "C2_CORRELATED_WIN",
+    "variation": "V3_EN_LexicalReorder",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Calculate the gap between average and top transaction (break ties by ID).",
+    "gold_sql": "WITH R AS (SELECT doc_id, treat_id, bill_amount, AVG(bill_amount) OVER (PARTITION BY doc_id) AS avg_a, ROW_NUMBER() OVER (PARTITION BY doc_id ORDER BY bill_amount DESC, treat_id ASC) AS rn FROM treatments) SELECT doc_id, treat_id, bill_amount AS max_val, bill_amount - avg_a AS diff_avg FROM R WHERE rn = 1;"
+  },
+  {
+    "question_id": "Q044",
+    "domain": "D2_HEALTHCARE",
+    "category": "C2_CORRELATED_WIN",
+    "variation": "V4_TH_Formal",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "หารายการค่ารักษาสูงสุดของแต่ละคน พร้อมผลต่างจากค่าเฉลี่ย",
+    "gold_sql": "WITH R AS (SELECT doc_id, treat_id, bill_amount, AVG(bill_amount) OVER (PARTITION BY doc_id) AS avg_a, ROW_NUMBER() OVER (PARTITION BY doc_id ORDER BY bill_amount DESC, treat_id ASC) AS rn FROM treatments) SELECT doc_id, treat_id, bill_amount AS max_val, bill_amount - avg_a AS diff_avg FROM R WHERE rn = 1;"
+  },
+  {
+    "question_id": "Q045",
+    "domain": "D2_HEALTHCARE",
+    "category": "C2_CORRELATED_WIN",
+    "variation": "V5_TH_Idiomatic",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "ดึงบิลค่ารักษายอดสูงสุดคนละ 1 ใบเทียบค่าเฉลี่ยตัวเอง",
+    "gold_sql": "WITH R AS (SELECT doc_id, treat_id, bill_amount, AVG(bill_amount) OVER (PARTITION BY doc_id) AS avg_a, ROW_NUMBER() OVER (PARTITION BY doc_id ORDER BY bill_amount DESC, treat_id ASC) AS rn FROM treatments) SELECT doc_id, treat_id, bill_amount AS max_val, bill_amount - avg_a AS diff_avg FROM R WHERE rn = 1;"
+  },
+  {
+    "question_id": "Q046",
+    "domain": "D2_HEALTHCARE",
+    "category": "C3_RELATIONAL_DIV",
+    "variation": "V1_EN_Standard",
+    "language": "EN",
+    "is_seed_21": true,
+    "question": "Find non-empty wards where EVERY member holds ALL core safety protocols.",
+    "gold_sql": "SELECT g.ward_id, g.ward_name FROM wards g WHERE EXISTS (SELECT 1 FROM doctors a WHERE a.ward_id = g.ward_id) AND NOT EXISTS (SELECT 1 FROM doctors a WHERE a.ward_id = g.ward_id AND EXISTS (SELECT 1 FROM clinical_protocols r WHERE r.is_core_safety = 1 AND NOT EXISTS (SELECT 1 FROM doc_protocols b WHERE b.doc_id = a.doc_id AND b.proto_id = r.proto_id)));"
+  },
+  {
+    "question_id": "Q047",
+    "domain": "D2_HEALTHCARE",
+    "category": "C3_RELATIONAL_DIV",
+    "variation": "V2_EN_ParamShift",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "List active wards where 100% of members hold all core safety protocols.",
+    "gold_sql": "SELECT g.ward_id, g.ward_name FROM wards g WHERE EXISTS (SELECT 1 FROM doctors a WHERE a.ward_id = g.ward_id) AND NOT EXISTS (SELECT 1 FROM doctors a WHERE a.ward_id = g.ward_id AND EXISTS (SELECT 1 FROM clinical_protocols r WHERE r.is_core_safety = 1 AND NOT EXISTS (SELECT 1 FROM doc_protocols b WHERE b.doc_id = a.doc_id AND b.proto_id = r.proto_id)));"
+  },
+  {
+    "question_id": "Q048",
+    "domain": "D2_HEALTHCARE",
+    "category": "C3_RELATIONAL_DIV",
+    "variation": "V3_EN_LexicalReorder",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Where no member is missing any core safety protocols, return the ward.",
+    "gold_sql": "SELECT g.ward_id, g.ward_name FROM wards g WHERE EXISTS (SELECT 1 FROM doctors a WHERE a.ward_id = g.ward_id) AND NOT EXISTS (SELECT 1 FROM doctors a WHERE a.ward_id = g.ward_id AND EXISTS (SELECT 1 FROM clinical_protocols r WHERE r.is_core_safety = 1 AND NOT EXISTS (SELECT 1 FROM doc_protocols b WHERE b.doc_id = a.doc_id AND b.proto_id = r.proto_id)));"
+  },
+  {
+    "question_id": "Q049",
+    "domain": "D2_HEALTHCARE",
+    "category": "C3_RELATIONAL_DIV",
+    "variation": "V4_TH_Formal",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "จงหาวอร์ดที่มีคนอยู่และทุกคนผ่านมาตรฐานความปลอดภัยหลักครบทุกตัว",
+    "gold_sql": "SELECT g.ward_id, g.ward_name FROM wards g WHERE EXISTS (SELECT 1 FROM doctors a WHERE a.ward_id = g.ward_id) AND NOT EXISTS (SELECT 1 FROM doctors a WHERE a.ward_id = g.ward_id AND EXISTS (SELECT 1 FROM clinical_protocols r WHERE r.is_core_safety = 1 AND NOT EXISTS (SELECT 1 FROM doc_protocols b WHERE b.doc_id = a.doc_id AND b.proto_id = r.proto_id)));"
+  },
+  {
+    "question_id": "Q050",
+    "domain": "D2_HEALTHCARE",
+    "category": "C3_RELATIONAL_DIV",
+    "variation": "V5_TH_Idiomatic",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "มีวอร์ดไหนที่คนข้างในเก็บมาตรฐานความปลอดภัยหลักครบทุกตัวโดยไม่เอาวอร์ดร้าง",
+    "gold_sql": "SELECT g.ward_id, g.ward_name FROM wards g WHERE EXISTS (SELECT 1 FROM doctors a WHERE a.ward_id = g.ward_id) AND NOT EXISTS (SELECT 1 FROM doctors a WHERE a.ward_id = g.ward_id AND EXISTS (SELECT 1 FROM clinical_protocols r WHERE r.is_core_safety = 1 AND NOT EXISTS (SELECT 1 FROM doc_protocols b WHERE b.doc_id = a.doc_id AND b.proto_id = r.proto_id)));"
+  },
+  {
+    "question_id": "Q051",
+    "domain": "D2_HEALTHCARE",
+    "category": "C4_GRANULARITY_FAN",
+    "variation": "V1_EN_Standard",
+    "language": "EN",
+    "is_seed_21": true,
+    "question": "Find doctors with 2025 treatment billing > quota and certs > ward average.",
+    "gold_sql": "WITH T AS (SELECT doc_id, SUM(bill_amount) AS tot FROM treatments WHERE treat_date >= '2025-01-01' AND treat_date < '2026-01-01' GROUP BY doc_id), C AS (SELECT a.doc_id, a.ward_id, COUNT(b.proto_id) AS cnt FROM doctors a LEFT JOIN doc_protocols b ON a.doc_id = b.doc_id GROUP BY a.doc_id, a.ward_id), A AS (SELECT doc_id, cnt, AVG(cnt * 1.0) OVER (PARTITION BY ward_id) AS g_avg FROM C) SELECT a.doc_id, a.doc_name, t.tot FROM doctors a JOIN T t ON a.doc_id = t.doc_id JOIN claim_coverage q ON a.doc_id = q.doc_id AND q.budget_year = 2025 JOIN A ag ON a.doc_id = ag.doc_id WHERE t.tot > q.quota_amount AND ag.cnt > ag.g_avg;"
+  },
+  {
+    "question_id": "Q052",
+    "domain": "D2_HEALTHCARE",
+    "category": "C4_GRANULARITY_FAN",
+    "variation": "V2_EN_ParamShift",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Find doctors with 2025 treatment billing >= quota and certs > ward average.",
+    "gold_sql": "WITH T AS (SELECT doc_id, SUM(bill_amount) AS tot FROM treatments WHERE treat_date >= '2025-01-01' AND treat_date < '2026-01-01' GROUP BY doc_id), C AS (SELECT a.doc_id, a.ward_id, COUNT(b.proto_id) AS cnt FROM doctors a LEFT JOIN doc_protocols b ON a.doc_id = b.doc_id GROUP BY a.doc_id, a.ward_id), A AS (SELECT doc_id, cnt, AVG(cnt * 1.0) OVER (PARTITION BY ward_id) AS g_avg FROM C) SELECT a.doc_id, a.doc_name, t.tot FROM doctors a JOIN T t ON a.doc_id = t.doc_id JOIN claim_coverage q ON a.doc_id = q.doc_id AND q.budget_year = 2025 JOIN A ag ON a.doc_id = ag.doc_id WHERE t.tot >= q.quota_amount AND ag.cnt > ag.g_avg;"
+  },
+  {
+    "question_id": "Q053",
+    "domain": "D2_HEALTHCARE",
+    "category": "C4_GRANULARITY_FAN",
+    "variation": "V3_EN_LexicalReorder",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Among those with above-average certs, list those beating their 2025 quota.",
+    "gold_sql": "WITH T AS (SELECT doc_id, SUM(bill_amount) AS tot FROM treatments WHERE treat_date >= '2025-01-01' AND treat_date < '2026-01-01' GROUP BY doc_id), C AS (SELECT a.doc_id, a.ward_id, COUNT(b.proto_id) AS cnt FROM doctors a LEFT JOIN doc_protocols b ON a.doc_id = b.doc_id GROUP BY a.doc_id, a.ward_id), A AS (SELECT doc_id, cnt, AVG(cnt * 1.0) OVER (PARTITION BY ward_id) AS g_avg FROM C) SELECT a.doc_id, a.doc_name, t.tot FROM doctors a JOIN T t ON a.doc_id = t.doc_id JOIN claim_coverage q ON a.doc_id = q.doc_id AND q.budget_year = 2025 JOIN A ag ON a.doc_id = ag.doc_id WHERE t.tot > q.quota_amount AND ag.cnt > ag.g_avg;"
+  },
+  {
+    "question_id": "Q054",
+    "domain": "D2_HEALTHCARE",
+    "category": "C4_GRANULARITY_FAN",
+    "variation": "V4_TH_Formal",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "หาแพทย์ที่ยอดปี 2025 สูงกว่าเป้าและมีใบรับรองเกินค่าเฉลี่ยวอร์ด",
+    "gold_sql": "WITH T AS (SELECT doc_id, SUM(bill_amount) AS tot FROM treatments WHERE treat_date >= '2025-01-01' AND treat_date < '2026-01-01' GROUP BY doc_id), C AS (SELECT a.doc_id, a.ward_id, COUNT(b.proto_id) AS cnt FROM doctors a LEFT JOIN doc_protocols b ON a.doc_id = b.doc_id GROUP BY a.doc_id, a.ward_id), A AS (SELECT doc_id, cnt, AVG(cnt * 1.0) OVER (PARTITION BY ward_id) AS g_avg FROM C) SELECT a.doc_id, a.doc_name, t.tot FROM doctors a JOIN T t ON a.doc_id = t.doc_id JOIN claim_coverage q ON a.doc_id = q.doc_id AND q.budget_year = 2025 JOIN A ag ON a.doc_id = ag.doc_id WHERE t.tot > q.quota_amount AND ag.cnt > ag.g_avg;"
+  },
+  {
+    "question_id": "Q055",
+    "domain": "D2_HEALTHCARE",
+    "category": "C4_GRANULARITY_FAN",
+    "variation": "V5_TH_Idiomatic",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "ใครทำยอดปี 2025 ทะลุเป้าแถมมีใบรับรองเยอะกว่าค่าเฉลี่ยคนในวอร์ดตัวเอง",
+    "gold_sql": "WITH T AS (SELECT doc_id, SUM(bill_amount) AS tot FROM treatments WHERE treat_date >= '2025-01-01' AND treat_date < '2026-01-01' GROUP BY doc_id), C AS (SELECT a.doc_id, a.ward_id, COUNT(b.proto_id) AS cnt FROM doctors a LEFT JOIN doc_protocols b ON a.doc_id = b.doc_id GROUP BY a.doc_id, a.ward_id), A AS (SELECT doc_id, cnt, AVG(cnt * 1.0) OVER (PARTITION BY ward_id) AS g_avg FROM C) SELECT a.doc_id, a.doc_name, t.tot FROM doctors a JOIN T t ON a.doc_id = t.doc_id JOIN claim_coverage q ON a.doc_id = q.doc_id AND q.budget_year = 2025 JOIN A ag ON a.doc_id = ag.doc_id WHERE t.tot > q.quota_amount AND ag.cnt > ag.g_avg;"
+  },
+  {
+    "question_id": "Q056",
+    "domain": "D2_HEALTHCARE",
+    "category": "C5_DEEP_SCOPE",
+    "variation": "V1_EN_Standard",
+    "language": "EN",
+    "is_seed_21": true,
+    "question": "Find doctors with base fee > ward avg in top-performing wards.",
+    "gold_sql": "WITH GT AS (SELECT g.ward_id, COALESCE(SUM(t.bill_amount), 0) AS g_tot FROM wards g LEFT JOIN doctors a ON g.ward_id = a.ward_id LEFT JOIN treatments t ON a.doc_id = t.doc_id AND t.treat_date >= '2025-01-01' AND t.treat_date < '2026-01-01' GROUP BY g.ward_id), AP AS (SELECT doc_id, doc_name, ward_id, base_fee, AVG(base_fee) OVER (PARTITION BY ward_id) AS avg_p FROM doctors) SELECT doc_id, doc_name, ward_id, base_fee FROM AP WHERE ward_id IN (SELECT ward_id FROM GT WHERE g_tot > (SELECT AVG(g_tot) FROM GT)) AND base_fee > avg_p;"
+  },
+  {
+    "question_id": "Q057",
+    "domain": "D2_HEALTHCARE",
+    "category": "C5_DEEP_SCOPE",
+    "variation": "V2_EN_ParamShift",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Find doctors with base fee < ward avg in top-performing wards.",
+    "gold_sql": "WITH GT AS (SELECT g.ward_id, COALESCE(SUM(t.bill_amount), 0) AS g_tot FROM wards g LEFT JOIN doctors a ON g.ward_id = a.ward_id LEFT JOIN treatments t ON a.doc_id = t.doc_id AND t.treat_date >= '2025-01-01' AND t.treat_date < '2026-01-01' GROUP BY g.ward_id), AP AS (SELECT doc_id, doc_name, ward_id, base_fee, AVG(base_fee) OVER (PARTITION BY ward_id) AS avg_p FROM doctors) SELECT doc_id, doc_name, ward_id, base_fee FROM AP WHERE ward_id IN (SELECT ward_id FROM GT WHERE g_tot > (SELECT AVG(g_tot) FROM GT)) AND base_fee < avg_p;"
+  },
+  {
+    "question_id": "Q058",
+    "domain": "D2_HEALTHCARE",
+    "category": "C5_DEEP_SCOPE",
+    "variation": "V3_EN_LexicalReorder",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "In wards beating the company 2025 average, list above-average earners.",
+    "gold_sql": "WITH GT AS (SELECT g.ward_id, COALESCE(SUM(t.bill_amount), 0) AS g_tot FROM wards g LEFT JOIN doctors a ON g.ward_id = a.ward_id LEFT JOIN treatments t ON a.doc_id = t.doc_id AND t.treat_date >= '2025-01-01' AND t.treat_date < '2026-01-01' GROUP BY g.ward_id), AP AS (SELECT doc_id, doc_name, ward_id, base_fee, AVG(base_fee) OVER (PARTITION BY ward_id) AS avg_p FROM doctors) SELECT doc_id, doc_name, ward_id, base_fee FROM AP WHERE ward_id IN (SELECT ward_id FROM GT WHERE g_tot > (SELECT AVG(g_tot) FROM GT)) AND base_fee > avg_p;"
+  },
+  {
+    "question_id": "Q059",
+    "domain": "D2_HEALTHCARE",
+    "category": "C5_DEEP_SCOPE",
+    "variation": "V4_TH_Formal",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "หาผู้ที่มีค่าตอบแทนพื้นฐานเกินค่าเฉลี่ยวอร์ด เฉพาะในวอร์ดที่ยอดสูงกว่าค่าเฉลี่ยองค์กร",
+    "gold_sql": "WITH GT AS (SELECT g.ward_id, COALESCE(SUM(t.bill_amount), 0) AS g_tot FROM wards g LEFT JOIN doctors a ON g.ward_id = a.ward_id LEFT JOIN treatments t ON a.doc_id = t.doc_id AND t.treat_date >= '2025-01-01' AND t.treat_date < '2026-01-01' GROUP BY g.ward_id), AP AS (SELECT doc_id, doc_name, ward_id, base_fee, AVG(base_fee) OVER (PARTITION BY ward_id) AS avg_p FROM doctors) SELECT doc_id, doc_name, ward_id, base_fee FROM AP WHERE ward_id IN (SELECT ward_id FROM GT WHERE g_tot > (SELECT AVG(g_tot) FROM GT)) AND base_fee > avg_p;"
+  },
+  {
+    "question_id": "Q060",
+    "domain": "D2_HEALTHCARE",
+    "category": "C5_DEEP_SCOPE",
+    "variation": "V5_TH_Idiomatic",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "คัดเฉพาะวอร์ดที่ยอดชนะค่าเฉลี่ยบริษัท แล้วดูว่าใครได้ค่าตอบแทนพื้นฐานเกินค่าเฉลี่ยวอร์ด",
+    "gold_sql": "WITH GT AS (SELECT g.ward_id, COALESCE(SUM(t.bill_amount), 0) AS g_tot FROM wards g LEFT JOIN doctors a ON g.ward_id = a.ward_id LEFT JOIN treatments t ON a.doc_id = t.doc_id AND t.treat_date >= '2025-01-01' AND t.treat_date < '2026-01-01' GROUP BY g.ward_id), AP AS (SELECT doc_id, doc_name, ward_id, base_fee, AVG(base_fee) OVER (PARTITION BY ward_id) AS avg_p FROM doctors) SELECT doc_id, doc_name, ward_id, base_fee FROM AP WHERE ward_id IN (SELECT ward_id FROM GT WHERE g_tot > (SELECT AVG(g_tot) FROM GT)) AND base_fee > avg_p;"
+  },
+  {
+    "question_id": "Q061",
+    "domain": "D2_HEALTHCARE",
+    "category": "C6_CASE_WHEN_ORDER",
+    "variation": "V1_EN_Standard",
+    "language": "EN",
+    "is_seed_21": true,
+    "question": "Classify tier: 'Standard' if >= 80000; 'Senior Fellow' if >= 150000 & all certs.",
+    "gold_sql": "WITH M AS (SELECT a.doc_id, a.doc_name, COALESCE((SELECT SUM(t.bill_amount) FROM treatments t WHERE t.doc_id = a.doc_id AND t.treat_date >= '2025-01-01' AND t.treat_date < '2026-01-01'), 0) AS s25, CASE WHEN NOT EXISTS (SELECT 1 FROM clinical_protocols r WHERE r.is_core_safety = 1 AND NOT EXISTS (SELECT 1 FROM doc_protocols b WHERE b.doc_id = a.doc_id AND b.proto_id = r.proto_id)) THEN 1 ELSE 0 END AS all_m FROM doctors a) SELECT doc_id, doc_name, CASE WHEN s25 >= 150000 AND all_m = 1 THEN 'Senior Fellow' WHEN s25 >= 80000 THEN 'Standard' ELSE 'Probation' END AS tier FROM M;"
+  },
+  {
+    "question_id": "Q062",
+    "domain": "D2_HEALTHCARE",
+    "category": "C6_CASE_WHEN_ORDER",
+    "variation": "V2_EN_ParamShift",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Classify tier: 'Standard' if >= 70000; 'Senior Fellow' if >= 140000 & all certs.",
+    "gold_sql": "WITH M AS (SELECT a.doc_id, a.doc_name, COALESCE((SELECT SUM(t.bill_amount) FROM treatments t WHERE t.doc_id = a.doc_id AND t.treat_date >= '2025-01-01' AND t.treat_date < '2026-01-01'), 0) AS s25, CASE WHEN NOT EXISTS (SELECT 1 FROM clinical_protocols r WHERE r.is_core_safety = 1 AND NOT EXISTS (SELECT 1 FROM doc_protocols b WHERE b.doc_id = a.doc_id AND b.proto_id = r.proto_id)) THEN 1 ELSE 0 END AS all_m FROM doctors a) SELECT doc_id, doc_name, CASE WHEN s25 >= 140000 AND all_m = 1 THEN 'Senior Fellow' WHEN s25 >= 70000 THEN 'Standard' ELSE 'Probation' END AS tier FROM M;"
+  },
+  {
+    "question_id": "Q063",
+    "domain": "D2_HEALTHCARE",
+    "category": "C6_CASE_WHEN_ORDER",
+    "variation": "V3_EN_LexicalReorder",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Assign 'Probation' if < 80000, 'Standard' if >= 80000, or 'Senior Fellow'.",
+    "gold_sql": "WITH M AS (SELECT a.doc_id, a.doc_name, COALESCE((SELECT SUM(t.bill_amount) FROM treatments t WHERE t.doc_id = a.doc_id AND t.treat_date >= '2025-01-01' AND t.treat_date < '2026-01-01'), 0) AS s25, CASE WHEN NOT EXISTS (SELECT 1 FROM clinical_protocols r WHERE r.is_core_safety = 1 AND NOT EXISTS (SELECT 1 FROM doc_protocols b WHERE b.doc_id = a.doc_id AND b.proto_id = r.proto_id)) THEN 1 ELSE 0 END AS all_m FROM doctors a) SELECT doc_id, doc_name, CASE WHEN s25 >= 150000 AND all_m = 1 THEN 'Senior Fellow' WHEN s25 >= 80000 THEN 'Standard' ELSE 'Probation' END AS tier FROM M;"
+  },
+  {
+    "question_id": "Q064",
+    "domain": "D2_HEALTHCARE",
+    "category": "C6_CASE_WHEN_ORDER",
+    "variation": "V4_TH_Formal",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "จัดระดับปี 2025: ตั้งแต่ 80000 เป็น 'Standard' ถ้าถึง 150000 และครบเกณฑ์เป็น 'Senior Fellow'",
+    "gold_sql": "WITH M AS (SELECT a.doc_id, a.doc_name, COALESCE((SELECT SUM(t.bill_amount) FROM treatments t WHERE t.doc_id = a.doc_id AND t.treat_date >= '2025-01-01' AND t.treat_date < '2026-01-01'), 0) AS s25, CASE WHEN NOT EXISTS (SELECT 1 FROM clinical_protocols r WHERE r.is_core_safety = 1 AND NOT EXISTS (SELECT 1 FROM doc_protocols b WHERE b.doc_id = a.doc_id AND b.proto_id = r.proto_id)) THEN 1 ELSE 0 END AS all_m FROM doctors a) SELECT doc_id, doc_name, CASE WHEN s25 >= 150000 AND all_m = 1 THEN 'Senior Fellow' WHEN s25 >= 80000 THEN 'Standard' ELSE 'Probation' END AS tier FROM M;"
+  },
+  {
+    "question_id": "Q065",
+    "domain": "D2_HEALTHCARE",
+    "category": "C6_CASE_WHEN_ORDER",
+    "variation": "V5_TH_Idiomatic",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "แบ่งเกรดปี 2025 ถ้าแตะ 80000 ให้ 'Standard' ถ้าทะลุ 150000 และเกณฑ์ครบให้ 'Senior Fellow'",
+    "gold_sql": "WITH M AS (SELECT a.doc_id, a.doc_name, COALESCE((SELECT SUM(t.bill_amount) FROM treatments t WHERE t.doc_id = a.doc_id AND t.treat_date >= '2025-01-01' AND t.treat_date < '2026-01-01'), 0) AS s25, CASE WHEN NOT EXISTS (SELECT 1 FROM clinical_protocols r WHERE r.is_core_safety = 1 AND NOT EXISTS (SELECT 1 FROM doc_protocols b WHERE b.doc_id = a.doc_id AND b.proto_id = r.proto_id)) THEN 1 ELSE 0 END AS all_m FROM doctors a) SELECT doc_id, doc_name, CASE WHEN s25 >= 150000 AND all_m = 1 THEN 'Senior Fellow' WHEN s25 >= 80000 THEN 'Standard' ELSE 'Probation' END AS tier FROM M;"
+  },
+  {
+    "question_id": "Q066",
+    "domain": "D2_HEALTHCARE",
+    "category": "C7_IIF_NVL_DIALECT",
+    "variation": "V1_EN_Standard",
+    "language": "EN",
+    "is_seed_21": true,
+    "question": "Compute xmoney (10% bonus if > quota) and showcost (base_fee + xmoney for bosses).",
+    "gold_sql": "WITH M AS (SELECT a.doc_id, a.doc_name, a.base_fee, COALESCE((SELECT SUM(t.bill_amount) FROM treatments t WHERE t.doc_id = a.doc_id AND t.treat_date >= '2025-01-01' AND t.treat_date < '2026-01-01'), 0) AS s25, (SELECT q.quota_amount FROM claim_coverage q WHERE q.doc_id = a.doc_id AND q.budget_year = 2025) AS q25, EXISTS (SELECT 1 FROM doctors sub WHERE sub.supervisor_id = a.doc_id) AS is_b FROM doctors a), B AS (SELECT *, CASE WHEN q25 IS NOT NULL AND s25 > q25 THEN s25 * 0.10 ELSE 0.0 END AS xmoney FROM M) SELECT doc_id, doc_name, xmoney, COALESCE(CASE WHEN is_b THEN base_fee + xmoney ELSE NULL END, base_fee) AS showcost FROM B;"
+  },
+  {
+    "question_id": "Q067",
+    "domain": "D2_HEALTHCARE",
+    "category": "C7_IIF_NVL_DIALECT",
+    "variation": "V2_EN_ParamShift",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Compute xmoney (15% bonus if > quota) and showcost (base_fee + xmoney for bosses).",
+    "gold_sql": "WITH M AS (SELECT a.doc_id, a.doc_name, a.base_fee, COALESCE((SELECT SUM(t.bill_amount) FROM treatments t WHERE t.doc_id = a.doc_id AND t.treat_date >= '2025-01-01' AND t.treat_date < '2026-01-01'), 0) AS s25, (SELECT q.quota_amount FROM claim_coverage q WHERE q.doc_id = a.doc_id AND q.budget_year = 2025) AS q25, EXISTS (SELECT 1 FROM doctors sub WHERE sub.supervisor_id = a.doc_id) AS is_b FROM doctors a), B AS (SELECT *, CASE WHEN q25 IS NOT NULL AND s25 > q25 THEN s25 * 0.15 ELSE 0.0 END AS xmoney FROM M) SELECT doc_id, doc_name, xmoney, COALESCE(CASE WHEN is_b THEN base_fee + xmoney ELSE NULL END, base_fee) AS showcost FROM B;"
+  },
+  {
+    "question_id": "Q068",
+    "domain": "D2_HEALTHCARE",
+    "category": "C7_IIF_NVL_DIALECT",
+    "variation": "V3_EN_LexicalReorder",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Return showcost and xmoney using NULL fallback for non-supervisors.",
+    "gold_sql": "WITH M AS (SELECT a.doc_id, a.doc_name, a.base_fee, COALESCE((SELECT SUM(t.bill_amount) FROM treatments t WHERE t.doc_id = a.doc_id AND t.treat_date >= '2025-01-01' AND t.treat_date < '2026-01-01'), 0) AS s25, (SELECT q.quota_amount FROM claim_coverage q WHERE q.doc_id = a.doc_id AND q.budget_year = 2025) AS q25, EXISTS (SELECT 1 FROM doctors sub WHERE sub.supervisor_id = a.doc_id) AS is_b FROM doctors a), B AS (SELECT *, CASE WHEN q25 IS NOT NULL AND s25 > q25 THEN s25 * 0.10 ELSE 0.0 END AS xmoney FROM M) SELECT doc_id, doc_name, xmoney, COALESCE(CASE WHEN is_b THEN base_fee + xmoney ELSE NULL END, base_fee) AS showcost FROM B;"
+  },
+  {
+    "question_id": "Q069",
+    "domain": "D2_HEALTHCARE",
+    "category": "C7_IIF_NVL_DIALECT",
+    "variation": "V4_TH_Formal",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "แสดง xmoney (10% หากเกินเป้า) และ showcost (หากมีลูกน้องให้บวก xmoney หากไม่มีใช้ค่าเริ่มต้น)",
+    "gold_sql": "WITH M AS (SELECT a.doc_id, a.doc_name, a.base_fee, COALESCE((SELECT SUM(t.bill_amount) FROM treatments t WHERE t.doc_id = a.doc_id AND t.treat_date >= '2025-01-01' AND t.treat_date < '2026-01-01'), 0) AS s25, (SELECT q.quota_amount FROM claim_coverage q WHERE q.doc_id = a.doc_id AND q.budget_year = 2025) AS q25, EXISTS (SELECT 1 FROM doctors sub WHERE sub.supervisor_id = a.doc_id) AS is_b FROM doctors a), B AS (SELECT *, CASE WHEN q25 IS NOT NULL AND s25 > q25 THEN s25 * 0.10 ELSE 0.0 END AS xmoney FROM M) SELECT doc_id, doc_name, xmoney, COALESCE(CASE WHEN is_b THEN base_fee + xmoney ELSE NULL END, base_fee) AS showcost FROM B;"
+  },
+  {
+    "question_id": "Q070",
+    "domain": "D2_HEALTHCARE",
+    "category": "C7_IIF_NVL_DIALECT",
+    "variation": "V5_TH_Idiomatic",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "คำนวณ xmoney 10% คนทะลุเป้า และ showcost ถ้าเป็นหัวหน้าให้บวก xmoney ถ้าไม่ใช่ให้ใช้เงินตั้งต้น",
+    "gold_sql": "WITH M AS (SELECT a.doc_id, a.doc_name, a.base_fee, COALESCE((SELECT SUM(t.bill_amount) FROM treatments t WHERE t.doc_id = a.doc_id AND t.treat_date >= '2025-01-01' AND t.treat_date < '2026-01-01'), 0) AS s25, (SELECT q.quota_amount FROM claim_coverage q WHERE q.doc_id = a.doc_id AND q.budget_year = 2025) AS q25, EXISTS (SELECT 1 FROM doctors sub WHERE sub.supervisor_id = a.doc_id) AS is_b FROM doctors a), B AS (SELECT *, CASE WHEN q25 IS NOT NULL AND s25 > q25 THEN s25 * 0.10 ELSE 0.0 END AS xmoney FROM M) SELECT doc_id, doc_name, xmoney, COALESCE(CASE WHEN is_b THEN base_fee + xmoney ELSE NULL END, base_fee) AS showcost FROM B;"
+  },
+  {
+    "question_id": "Q071",
+    "domain": "D3_BANKING",
+    "category": "C1_3VL_NULL",
+    "variation": "V1_EN_Standard",
+    "language": "EN",
+    "is_seed_21": true,
+    "question": "Find all loan officers who do not approve loans for anyone.",
+    "gold_sql": "SELECT a.officer_id, a.officer_name FROM loan_officers a WHERE NOT EXISTS (SELECT 1 FROM loan_officers sub WHERE sub.approver_id = a.officer_id);"
+  },
+  {
+    "question_id": "Q072",
+    "domain": "D3_BANKING",
+    "category": "C1_3VL_NULL",
+    "variation": "V2_EN_ParamShift",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Find loan officers with retainer salary > 30000 who do not approve loans for anyone.",
+    "gold_sql": "SELECT a.officer_id, a.officer_name FROM loan_officers a WHERE a.retainer_salary > 30000 AND NOT EXISTS (SELECT 1 FROM loan_officers sub WHERE sub.approver_id = a.officer_id);"
+  },
+  {
+    "question_id": "Q073",
+    "domain": "D3_BANKING",
+    "category": "C1_3VL_NULL",
+    "variation": "V3_EN_LexicalReorder",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Excluding supervisors, list every loan officer with zero reports.",
+    "gold_sql": "SELECT a.officer_id, a.officer_name FROM loan_officers a WHERE NOT EXISTS (SELECT 1 FROM loan_officers sub WHERE sub.approver_id = a.officer_id);"
+  },
+  {
+    "question_id": "Q074",
+    "domain": "D3_BANKING",
+    "category": "C1_3VL_NULL",
+    "variation": "V4_TH_Formal",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "จงค้นหาเจ้าหน้าที่สินเชื่อที่ไม่ได้อนุมัติวงเงินให้คนอื่นเลย",
+    "gold_sql": "SELECT a.officer_id, a.officer_name FROM loan_officers a WHERE NOT EXISTS (SELECT 1 FROM loan_officers sub WHERE sub.approver_id = a.officer_id);"
+  },
+  {
+    "question_id": "Q075",
+    "domain": "D3_BANKING",
+    "category": "C1_3VL_NULL",
+    "variation": "V5_TH_Idiomatic",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "ขอรายชื่อเจ้าหน้าที่สินเชื่อที่ไม่มีลูกน้องในสังกัดเลย",
+    "gold_sql": "SELECT a.officer_id, a.officer_name FROM loan_officers a WHERE NOT EXISTS (SELECT 1 FROM loan_officers sub WHERE sub.approver_id = a.officer_id);"
+  },
+  {
+    "question_id": "Q076",
+    "domain": "D3_BANKING",
+    "category": "C2_CORRELATED_WIN",
+    "variation": "V1_EN_Standard",
+    "language": "EN",
+    "is_seed_21": true,
+    "question": "Find each loan officer's highest loan principal and difference from average.",
+    "gold_sql": "WITH R AS (SELECT officer_id, loan_id, principal_amount, AVG(principal_amount) OVER (PARTITION BY officer_id) AS avg_a, ROW_NUMBER() OVER (PARTITION BY officer_id ORDER BY principal_amount DESC, loan_id ASC) AS rn FROM loan_disbursements) SELECT officer_id, loan_id, principal_amount AS max_val, principal_amount - avg_a AS diff_avg FROM R WHERE rn = 1;"
+  },
+  {
+    "question_id": "Q077",
+    "domain": "D3_BANKING",
+    "category": "C2_CORRELATED_WIN",
+    "variation": "V2_EN_ParamShift",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Find each loan officer's lowest loan principal and difference from average.",
+    "gold_sql": "WITH R AS (SELECT officer_id, loan_id, principal_amount, AVG(principal_amount) OVER (PARTITION BY officer_id) AS avg_a, ROW_NUMBER() OVER (PARTITION BY officer_id ORDER BY principal_amount ASC, loan_id ASC) AS rn FROM loan_disbursements) SELECT officer_id, loan_id, principal_amount AS max_val, principal_amount - avg_a AS diff_avg FROM R WHERE rn = 1;"
+  },
+  {
+    "question_id": "Q078",
+    "domain": "D3_BANKING",
+    "category": "C2_CORRELATED_WIN",
+    "variation": "V3_EN_LexicalReorder",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Calculate the gap between average and top transaction (break ties by ID).",
+    "gold_sql": "WITH R AS (SELECT officer_id, loan_id, principal_amount, AVG(principal_amount) OVER (PARTITION BY officer_id) AS avg_a, ROW_NUMBER() OVER (PARTITION BY officer_id ORDER BY principal_amount DESC, loan_id ASC) AS rn FROM loan_disbursements) SELECT officer_id, loan_id, principal_amount AS max_val, principal_amount - avg_a AS diff_avg FROM R WHERE rn = 1;"
+  },
+  {
+    "question_id": "Q079",
+    "domain": "D3_BANKING",
+    "category": "C2_CORRELATED_WIN",
+    "variation": "V4_TH_Formal",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "หารายการยอดปล่อยกู้สูงสุดของแต่ละคน พร้อมผลต่างจากค่าเฉลี่ย",
+    "gold_sql": "WITH R AS (SELECT officer_id, loan_id, principal_amount, AVG(principal_amount) OVER (PARTITION BY officer_id) AS avg_a, ROW_NUMBER() OVER (PARTITION BY officer_id ORDER BY principal_amount DESC, loan_id ASC) AS rn FROM loan_disbursements) SELECT officer_id, loan_id, principal_amount AS max_val, principal_amount - avg_a AS diff_avg FROM R WHERE rn = 1;"
+  },
+  {
+    "question_id": "Q080",
+    "domain": "D3_BANKING",
+    "category": "C2_CORRELATED_WIN",
+    "variation": "V5_TH_Idiomatic",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "ดึงบิลยอดปล่อยกู้ยอดสูงสุดคนละ 1 ใบเทียบค่าเฉลี่ยตัวเอง",
+    "gold_sql": "WITH R AS (SELECT officer_id, loan_id, principal_amount, AVG(principal_amount) OVER (PARTITION BY officer_id) AS avg_a, ROW_NUMBER() OVER (PARTITION BY officer_id ORDER BY principal_amount DESC, loan_id ASC) AS rn FROM loan_disbursements) SELECT officer_id, loan_id, principal_amount AS max_val, principal_amount - avg_a AS diff_avg FROM R WHERE rn = 1;"
+  },
+  {
+    "question_id": "Q081",
+    "domain": "D3_BANKING",
+    "category": "C3_RELATIONAL_DIV",
+    "variation": "V1_EN_Standard",
+    "language": "EN",
+    "is_seed_21": true,
+    "question": "Find non-empty branchs where EVERY member holds ALL statutory licenses.",
+    "gold_sql": "SELECT g.branch_id, g.branch_name FROM branches g WHERE EXISTS (SELECT 1 FROM loan_officers a WHERE a.branch_id = g.branch_id) AND NOT EXISTS (SELECT 1 FROM loan_officers a WHERE a.branch_id = g.branch_id AND EXISTS (SELECT 1 FROM compliance_licenses r WHERE r.is_statutory = 1 AND NOT EXISTS (SELECT 1 FROM officer_licenses b WHERE b.officer_id = a.officer_id AND b.lic_id = r.lic_id)));"
+  },
+  {
+    "question_id": "Q082",
+    "domain": "D3_BANKING",
+    "category": "C3_RELATIONAL_DIV",
+    "variation": "V2_EN_ParamShift",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "List active branchs where 100% of members hold all statutory licenses.",
+    "gold_sql": "SELECT g.branch_id, g.branch_name FROM branches g WHERE EXISTS (SELECT 1 FROM loan_officers a WHERE a.branch_id = g.branch_id) AND NOT EXISTS (SELECT 1 FROM loan_officers a WHERE a.branch_id = g.branch_id AND EXISTS (SELECT 1 FROM compliance_licenses r WHERE r.is_statutory = 1 AND NOT EXISTS (SELECT 1 FROM officer_licenses b WHERE b.officer_id = a.officer_id AND b.lic_id = r.lic_id)));"
+  },
+  {
+    "question_id": "Q083",
+    "domain": "D3_BANKING",
+    "category": "C3_RELATIONAL_DIV",
+    "variation": "V3_EN_LexicalReorder",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Where no member is missing any statutory licenses, return the branch.",
+    "gold_sql": "SELECT g.branch_id, g.branch_name FROM branches g WHERE EXISTS (SELECT 1 FROM loan_officers a WHERE a.branch_id = g.branch_id) AND NOT EXISTS (SELECT 1 FROM loan_officers a WHERE a.branch_id = g.branch_id AND EXISTS (SELECT 1 FROM compliance_licenses r WHERE r.is_statutory = 1 AND NOT EXISTS (SELECT 1 FROM officer_licenses b WHERE b.officer_id = a.officer_id AND b.lic_id = r.lic_id)));"
+  },
+  {
+    "question_id": "Q084",
+    "domain": "D3_BANKING",
+    "category": "C3_RELATIONAL_DIV",
+    "variation": "V4_TH_Formal",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "จงหาสาขาที่มีคนอยู่และทุกคนผ่านใบอนุญาตตามกฎหมายครบทุกตัว",
+    "gold_sql": "SELECT g.branch_id, g.branch_name FROM branches g WHERE EXISTS (SELECT 1 FROM loan_officers a WHERE a.branch_id = g.branch_id) AND NOT EXISTS (SELECT 1 FROM loan_officers a WHERE a.branch_id = g.branch_id AND EXISTS (SELECT 1 FROM compliance_licenses r WHERE r.is_statutory = 1 AND NOT EXISTS (SELECT 1 FROM officer_licenses b WHERE b.officer_id = a.officer_id AND b.lic_id = r.lic_id)));"
+  },
+  {
+    "question_id": "Q085",
+    "domain": "D3_BANKING",
+    "category": "C3_RELATIONAL_DIV",
+    "variation": "V5_TH_Idiomatic",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "มีสาขาไหนที่คนข้างในเก็บใบอนุญาตตามกฎหมายครบทุกตัวโดยไม่เอาสาขาร้าง",
+    "gold_sql": "SELECT g.branch_id, g.branch_name FROM branches g WHERE EXISTS (SELECT 1 FROM loan_officers a WHERE a.branch_id = g.branch_id) AND NOT EXISTS (SELECT 1 FROM loan_officers a WHERE a.branch_id = g.branch_id AND EXISTS (SELECT 1 FROM compliance_licenses r WHERE r.is_statutory = 1 AND NOT EXISTS (SELECT 1 FROM officer_licenses b WHERE b.officer_id = a.officer_id AND b.lic_id = r.lic_id)));"
+  },
+  {
+    "question_id": "Q086",
+    "domain": "D3_BANKING",
+    "category": "C4_GRANULARITY_FAN",
+    "variation": "V1_EN_Standard",
+    "language": "EN",
+    "is_seed_21": true,
+    "question": "Find loan officers with 2025 loan principal > quota and certs > branch average.",
+    "gold_sql": "WITH T AS (SELECT officer_id, SUM(principal_amount) AS tot FROM loan_disbursements WHERE disburse_date >= '2025-01-01' AND disburse_date < '2026-01-01' GROUP BY officer_id), C AS (SELECT a.officer_id, a.branch_id, COUNT(b.lic_id) AS cnt FROM loan_officers a LEFT JOIN officer_licenses b ON a.officer_id = b.officer_id GROUP BY a.officer_id, a.branch_id), A AS (SELECT officer_id, cnt, AVG(cnt * 1.0) OVER (PARTITION BY branch_id) AS g_avg FROM C) SELECT a.officer_id, a.officer_name, t.tot FROM loan_officers a JOIN T t ON a.officer_id = t.officer_id JOIN portfolio_quotas q ON a.officer_id = q.officer_id AND q.quota_year = 2025 JOIN A ag ON a.officer_id = ag.officer_id WHERE t.tot > q.target_principal AND ag.cnt > ag.g_avg;"
+  },
+  {
+    "question_id": "Q087",
+    "domain": "D3_BANKING",
+    "category": "C4_GRANULARITY_FAN",
+    "variation": "V2_EN_ParamShift",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Find loan officers with 2025 loan principal >= quota and certs > branch average.",
+    "gold_sql": "WITH T AS (SELECT officer_id, SUM(principal_amount) AS tot FROM loan_disbursements WHERE disburse_date >= '2025-01-01' AND disburse_date < '2026-01-01' GROUP BY officer_id), C AS (SELECT a.officer_id, a.branch_id, COUNT(b.lic_id) AS cnt FROM loan_officers a LEFT JOIN officer_licenses b ON a.officer_id = b.officer_id GROUP BY a.officer_id, a.branch_id), A AS (SELECT officer_id, cnt, AVG(cnt * 1.0) OVER (PARTITION BY branch_id) AS g_avg FROM C) SELECT a.officer_id, a.officer_name, t.tot FROM loan_officers a JOIN T t ON a.officer_id = t.officer_id JOIN portfolio_quotas q ON a.officer_id = q.officer_id AND q.quota_year = 2025 JOIN A ag ON a.officer_id = ag.officer_id WHERE t.tot >= q.target_principal AND ag.cnt > ag.g_avg;"
+  },
+  {
+    "question_id": "Q088",
+    "domain": "D3_BANKING",
+    "category": "C4_GRANULARITY_FAN",
+    "variation": "V3_EN_LexicalReorder",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Among those with above-average certs, list those beating their 2025 quota.",
+    "gold_sql": "WITH T AS (SELECT officer_id, SUM(principal_amount) AS tot FROM loan_disbursements WHERE disburse_date >= '2025-01-01' AND disburse_date < '2026-01-01' GROUP BY officer_id), C AS (SELECT a.officer_id, a.branch_id, COUNT(b.lic_id) AS cnt FROM loan_officers a LEFT JOIN officer_licenses b ON a.officer_id = b.officer_id GROUP BY a.officer_id, a.branch_id), A AS (SELECT officer_id, cnt, AVG(cnt * 1.0) OVER (PARTITION BY branch_id) AS g_avg FROM C) SELECT a.officer_id, a.officer_name, t.tot FROM loan_officers a JOIN T t ON a.officer_id = t.officer_id JOIN portfolio_quotas q ON a.officer_id = q.officer_id AND q.quota_year = 2025 JOIN A ag ON a.officer_id = ag.officer_id WHERE t.tot > q.target_principal AND ag.cnt > ag.g_avg;"
+  },
+  {
+    "question_id": "Q089",
+    "domain": "D3_BANKING",
+    "category": "C4_GRANULARITY_FAN",
+    "variation": "V4_TH_Formal",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "หาเจ้าหน้าที่สินเชื่อที่ยอดปี 2025 สูงกว่าเป้าและมีใบรับรองเกินค่าเฉลี่ยสาขา",
+    "gold_sql": "WITH T AS (SELECT officer_id, SUM(principal_amount) AS tot FROM loan_disbursements WHERE disburse_date >= '2025-01-01' AND disburse_date < '2026-01-01' GROUP BY officer_id), C AS (SELECT a.officer_id, a.branch_id, COUNT(b.lic_id) AS cnt FROM loan_officers a LEFT JOIN officer_licenses b ON a.officer_id = b.officer_id GROUP BY a.officer_id, a.branch_id), A AS (SELECT officer_id, cnt, AVG(cnt * 1.0) OVER (PARTITION BY branch_id) AS g_avg FROM C) SELECT a.officer_id, a.officer_name, t.tot FROM loan_officers a JOIN T t ON a.officer_id = t.officer_id JOIN portfolio_quotas q ON a.officer_id = q.officer_id AND q.quota_year = 2025 JOIN A ag ON a.officer_id = ag.officer_id WHERE t.tot > q.target_principal AND ag.cnt > ag.g_avg;"
+  },
+  {
+    "question_id": "Q090",
+    "domain": "D3_BANKING",
+    "category": "C4_GRANULARITY_FAN",
+    "variation": "V5_TH_Idiomatic",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "ใครทำยอดปี 2025 ทะลุเป้าแถมมีใบรับรองเยอะกว่าค่าเฉลี่ยคนในสาขาตัวเอง",
+    "gold_sql": "WITH T AS (SELECT officer_id, SUM(principal_amount) AS tot FROM loan_disbursements WHERE disburse_date >= '2025-01-01' AND disburse_date < '2026-01-01' GROUP BY officer_id), C AS (SELECT a.officer_id, a.branch_id, COUNT(b.lic_id) AS cnt FROM loan_officers a LEFT JOIN officer_licenses b ON a.officer_id = b.officer_id GROUP BY a.officer_id, a.branch_id), A AS (SELECT officer_id, cnt, AVG(cnt * 1.0) OVER (PARTITION BY branch_id) AS g_avg FROM C) SELECT a.officer_id, a.officer_name, t.tot FROM loan_officers a JOIN T t ON a.officer_id = t.officer_id JOIN portfolio_quotas q ON a.officer_id = q.officer_id AND q.quota_year = 2025 JOIN A ag ON a.officer_id = ag.officer_id WHERE t.tot > q.target_principal AND ag.cnt > ag.g_avg;"
+  },
+  {
+    "question_id": "Q091",
+    "domain": "D3_BANKING",
+    "category": "C5_DEEP_SCOPE",
+    "variation": "V1_EN_Standard",
+    "language": "EN",
+    "is_seed_21": true,
+    "question": "Find loan officers with retainer salary > branch avg in top-performing branchs.",
+    "gold_sql": "WITH GT AS (SELECT g.branch_id, COALESCE(SUM(t.principal_amount), 0) AS g_tot FROM branches g LEFT JOIN loan_officers a ON g.branch_id = a.branch_id LEFT JOIN loan_disbursements t ON a.officer_id = t.officer_id AND t.disburse_date >= '2025-01-01' AND t.disburse_date < '2026-01-01' GROUP BY g.branch_id), AP AS (SELECT officer_id, officer_name, branch_id, retainer_salary, AVG(retainer_salary) OVER (PARTITION BY branch_id) AS avg_p FROM loan_officers) SELECT officer_id, officer_name, branch_id, retainer_salary FROM AP WHERE branch_id IN (SELECT branch_id FROM GT WHERE g_tot > (SELECT AVG(g_tot) FROM GT)) AND retainer_salary > avg_p;"
+  },
+  {
+    "question_id": "Q092",
+    "domain": "D3_BANKING",
+    "category": "C5_DEEP_SCOPE",
+    "variation": "V2_EN_ParamShift",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Find loan officers with retainer salary < branch avg in top-performing branchs.",
+    "gold_sql": "WITH GT AS (SELECT g.branch_id, COALESCE(SUM(t.principal_amount), 0) AS g_tot FROM branches g LEFT JOIN loan_officers a ON g.branch_id = a.branch_id LEFT JOIN loan_disbursements t ON a.officer_id = t.officer_id AND t.disburse_date >= '2025-01-01' AND t.disburse_date < '2026-01-01' GROUP BY g.branch_id), AP AS (SELECT officer_id, officer_name, branch_id, retainer_salary, AVG(retainer_salary) OVER (PARTITION BY branch_id) AS avg_p FROM loan_officers) SELECT officer_id, officer_name, branch_id, retainer_salary FROM AP WHERE branch_id IN (SELECT branch_id FROM GT WHERE g_tot > (SELECT AVG(g_tot) FROM GT)) AND retainer_salary < avg_p;"
+  },
+  {
+    "question_id": "Q093",
+    "domain": "D3_BANKING",
+    "category": "C5_DEEP_SCOPE",
+    "variation": "V3_EN_LexicalReorder",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "In branchs beating the company 2025 average, list above-average earners.",
+    "gold_sql": "WITH GT AS (SELECT g.branch_id, COALESCE(SUM(t.principal_amount), 0) AS g_tot FROM branches g LEFT JOIN loan_officers a ON g.branch_id = a.branch_id LEFT JOIN loan_disbursements t ON a.officer_id = t.officer_id AND t.disburse_date >= '2025-01-01' AND t.disburse_date < '2026-01-01' GROUP BY g.branch_id), AP AS (SELECT officer_id, officer_name, branch_id, retainer_salary, AVG(retainer_salary) OVER (PARTITION BY branch_id) AS avg_p FROM loan_officers) SELECT officer_id, officer_name, branch_id, retainer_salary FROM AP WHERE branch_id IN (SELECT branch_id FROM GT WHERE g_tot > (SELECT AVG(g_tot) FROM GT)) AND retainer_salary > avg_p;"
+  },
+  {
+    "question_id": "Q094",
+    "domain": "D3_BANKING",
+    "category": "C5_DEEP_SCOPE",
+    "variation": "V4_TH_Formal",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "หาผู้ที่มีเงินเดือนประจำเกินค่าเฉลี่ยสาขา เฉพาะในสาขาที่ยอดสูงกว่าค่าเฉลี่ยองค์กร",
+    "gold_sql": "WITH GT AS (SELECT g.branch_id, COALESCE(SUM(t.principal_amount), 0) AS g_tot FROM branches g LEFT JOIN loan_officers a ON g.branch_id = a.branch_id LEFT JOIN loan_disbursements t ON a.officer_id = t.officer_id AND t.disburse_date >= '2025-01-01' AND t.disburse_date < '2026-01-01' GROUP BY g.branch_id), AP AS (SELECT officer_id, officer_name, branch_id, retainer_salary, AVG(retainer_salary) OVER (PARTITION BY branch_id) AS avg_p FROM loan_officers) SELECT officer_id, officer_name, branch_id, retainer_salary FROM AP WHERE branch_id IN (SELECT branch_id FROM GT WHERE g_tot > (SELECT AVG(g_tot) FROM GT)) AND retainer_salary > avg_p;"
+  },
+  {
+    "question_id": "Q095",
+    "domain": "D3_BANKING",
+    "category": "C5_DEEP_SCOPE",
+    "variation": "V5_TH_Idiomatic",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "คัดเฉพาะสาขาที่ยอดชนะค่าเฉลี่ยบริษัท แล้วดูว่าใครได้เงินเดือนประจำเกินค่าเฉลี่ยสาขา",
+    "gold_sql": "WITH GT AS (SELECT g.branch_id, COALESCE(SUM(t.principal_amount), 0) AS g_tot FROM branches g LEFT JOIN loan_officers a ON g.branch_id = a.branch_id LEFT JOIN loan_disbursements t ON a.officer_id = t.officer_id AND t.disburse_date >= '2025-01-01' AND t.disburse_date < '2026-01-01' GROUP BY g.branch_id), AP AS (SELECT officer_id, officer_name, branch_id, retainer_salary, AVG(retainer_salary) OVER (PARTITION BY branch_id) AS avg_p FROM loan_officers) SELECT officer_id, officer_name, branch_id, retainer_salary FROM AP WHERE branch_id IN (SELECT branch_id FROM GT WHERE g_tot > (SELECT AVG(g_tot) FROM GT)) AND retainer_salary > avg_p;"
+  },
+  {
+    "question_id": "Q096",
+    "domain": "D3_BANKING",
+    "category": "C6_CASE_WHEN_ORDER",
+    "variation": "V1_EN_Standard",
+    "language": "EN",
+    "is_seed_21": true,
+    "question": "Classify tier: 'Qualified' if >= 250000; 'Prime Underwriter' if >= 500000 & all certs.",
+    "gold_sql": "WITH M AS (SELECT a.officer_id, a.officer_name, COALESCE((SELECT SUM(t.principal_amount) FROM loan_disbursements t WHERE t.officer_id = a.officer_id AND t.disburse_date >= '2025-01-01' AND t.disburse_date < '2026-01-01'), 0) AS s25, CASE WHEN NOT EXISTS (SELECT 1 FROM compliance_licenses r WHERE r.is_statutory = 1 AND NOT EXISTS (SELECT 1 FROM officer_licenses b WHERE b.officer_id = a.officer_id AND b.lic_id = r.lic_id)) THEN 1 ELSE 0 END AS all_m FROM loan_officers a) SELECT officer_id, officer_name, CASE WHEN s25 >= 500000 AND all_m = 1 THEN 'Prime Underwriter' WHEN s25 >= 250000 THEN 'Qualified' ELSE 'Restricted' END AS tier FROM M;"
+  },
+  {
+    "question_id": "Q097",
+    "domain": "D3_BANKING",
+    "category": "C6_CASE_WHEN_ORDER",
+    "variation": "V2_EN_ParamShift",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Classify tier: 'Qualified' if >= 200000; 'Prime Underwriter' if >= 450000 & all certs.",
+    "gold_sql": "WITH M AS (SELECT a.officer_id, a.officer_name, COALESCE((SELECT SUM(t.principal_amount) FROM loan_disbursements t WHERE t.officer_id = a.officer_id AND t.disburse_date >= '2025-01-01' AND t.disburse_date < '2026-01-01'), 0) AS s25, CASE WHEN NOT EXISTS (SELECT 1 FROM compliance_licenses r WHERE r.is_statutory = 1 AND NOT EXISTS (SELECT 1 FROM officer_licenses b WHERE b.officer_id = a.officer_id AND b.lic_id = r.lic_id)) THEN 1 ELSE 0 END AS all_m FROM loan_officers a) SELECT officer_id, officer_name, CASE WHEN s25 >= 450000 AND all_m = 1 THEN 'Prime Underwriter' WHEN s25 >= 200000 THEN 'Qualified' ELSE 'Restricted' END AS tier FROM M;"
+  },
+  {
+    "question_id": "Q098",
+    "domain": "D3_BANKING",
+    "category": "C6_CASE_WHEN_ORDER",
+    "variation": "V3_EN_LexicalReorder",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Assign 'Restricted' if < 250000, 'Qualified' if >= 250000, or 'Prime Underwriter'.",
+    "gold_sql": "WITH M AS (SELECT a.officer_id, a.officer_name, COALESCE((SELECT SUM(t.principal_amount) FROM loan_disbursements t WHERE t.officer_id = a.officer_id AND t.disburse_date >= '2025-01-01' AND t.disburse_date < '2026-01-01'), 0) AS s25, CASE WHEN NOT EXISTS (SELECT 1 FROM compliance_licenses r WHERE r.is_statutory = 1 AND NOT EXISTS (SELECT 1 FROM officer_licenses b WHERE b.officer_id = a.officer_id AND b.lic_id = r.lic_id)) THEN 1 ELSE 0 END AS all_m FROM loan_officers a) SELECT officer_id, officer_name, CASE WHEN s25 >= 500000 AND all_m = 1 THEN 'Prime Underwriter' WHEN s25 >= 250000 THEN 'Qualified' ELSE 'Restricted' END AS tier FROM M;"
+  },
+  {
+    "question_id": "Q099",
+    "domain": "D3_BANKING",
+    "category": "C6_CASE_WHEN_ORDER",
+    "variation": "V4_TH_Formal",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "จัดระดับปี 2025: ตั้งแต่ 250000 เป็น 'Qualified' ถ้าถึง 500000 และครบเกณฑ์เป็น 'Prime Underwriter'",
+    "gold_sql": "WITH M AS (SELECT a.officer_id, a.officer_name, COALESCE((SELECT SUM(t.principal_amount) FROM loan_disbursements t WHERE t.officer_id = a.officer_id AND t.disburse_date >= '2025-01-01' AND t.disburse_date < '2026-01-01'), 0) AS s25, CASE WHEN NOT EXISTS (SELECT 1 FROM compliance_licenses r WHERE r.is_statutory = 1 AND NOT EXISTS (SELECT 1 FROM officer_licenses b WHERE b.officer_id = a.officer_id AND b.lic_id = r.lic_id)) THEN 1 ELSE 0 END AS all_m FROM loan_officers a) SELECT officer_id, officer_name, CASE WHEN s25 >= 500000 AND all_m = 1 THEN 'Prime Underwriter' WHEN s25 >= 250000 THEN 'Qualified' ELSE 'Restricted' END AS tier FROM M;"
+  },
+  {
+    "question_id": "Q100",
+    "domain": "D3_BANKING",
+    "category": "C6_CASE_WHEN_ORDER",
+    "variation": "V5_TH_Idiomatic",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "แบ่งเกรดปี 2025 ถ้าแตะ 250000 ให้ 'Qualified' ถ้าทะลุ 500000 และเกณฑ์ครบให้ 'Prime Underwriter'",
+    "gold_sql": "WITH M AS (SELECT a.officer_id, a.officer_name, COALESCE((SELECT SUM(t.principal_amount) FROM loan_disbursements t WHERE t.officer_id = a.officer_id AND t.disburse_date >= '2025-01-01' AND t.disburse_date < '2026-01-01'), 0) AS s25, CASE WHEN NOT EXISTS (SELECT 1 FROM compliance_licenses r WHERE r.is_statutory = 1 AND NOT EXISTS (SELECT 1 FROM officer_licenses b WHERE b.officer_id = a.officer_id AND b.lic_id = r.lic_id)) THEN 1 ELSE 0 END AS all_m FROM loan_officers a) SELECT officer_id, officer_name, CASE WHEN s25 >= 500000 AND all_m = 1 THEN 'Prime Underwriter' WHEN s25 >= 250000 THEN 'Qualified' ELSE 'Restricted' END AS tier FROM M;"
+  },
+  {
+    "question_id": "Q101",
+    "domain": "D3_BANKING",
+    "category": "C7_IIF_NVL_DIALECT",
+    "variation": "V1_EN_Standard",
+    "language": "EN",
+    "is_seed_21": true,
+    "question": "Compute xmoney (10% bonus if > quota) and showcost (retainer_salary + xmoney for bosses).",
+    "gold_sql": "WITH M AS (SELECT a.officer_id, a.officer_name, a.retainer_salary, COALESCE((SELECT SUM(t.principal_amount) FROM loan_disbursements t WHERE t.officer_id = a.officer_id AND t.disburse_date >= '2025-01-01' AND t.disburse_date < '2026-01-01'), 0) AS s25, (SELECT q.target_principal FROM portfolio_quotas q WHERE q.officer_id = a.officer_id AND q.quota_year = 2025) AS q25, EXISTS (SELECT 1 FROM loan_officers sub WHERE sub.approver_id = a.officer_id) AS is_b FROM loan_officers a), B AS (SELECT *, CASE WHEN q25 IS NOT NULL AND s25 > q25 THEN s25 * 0.10 ELSE 0.0 END AS xmoney FROM M) SELECT officer_id, officer_name, xmoney, COALESCE(CASE WHEN is_b THEN retainer_salary + xmoney ELSE NULL END, retainer_salary) AS showcost FROM B;"
+  },
+  {
+    "question_id": "Q102",
+    "domain": "D3_BANKING",
+    "category": "C7_IIF_NVL_DIALECT",
+    "variation": "V2_EN_ParamShift",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Compute xmoney (15% bonus if > quota) and showcost (retainer_salary + xmoney for bosses).",
+    "gold_sql": "WITH M AS (SELECT a.officer_id, a.officer_name, a.retainer_salary, COALESCE((SELECT SUM(t.principal_amount) FROM loan_disbursements t WHERE t.officer_id = a.officer_id AND t.disburse_date >= '2025-01-01' AND t.disburse_date < '2026-01-01'), 0) AS s25, (SELECT q.target_principal FROM portfolio_quotas q WHERE q.officer_id = a.officer_id AND q.quota_year = 2025) AS q25, EXISTS (SELECT 1 FROM loan_officers sub WHERE sub.approver_id = a.officer_id) AS is_b FROM loan_officers a), B AS (SELECT *, CASE WHEN q25 IS NOT NULL AND s25 > q25 THEN s25 * 0.15 ELSE 0.0 END AS xmoney FROM M) SELECT officer_id, officer_name, xmoney, COALESCE(CASE WHEN is_b THEN retainer_salary + xmoney ELSE NULL END, retainer_salary) AS showcost FROM B;"
+  },
+  {
+    "question_id": "Q103",
+    "domain": "D3_BANKING",
+    "category": "C7_IIF_NVL_DIALECT",
+    "variation": "V3_EN_LexicalReorder",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "Return showcost and xmoney using NULL fallback for non-supervisors.",
+    "gold_sql": "WITH M AS (SELECT a.officer_id, a.officer_name, a.retainer_salary, COALESCE((SELECT SUM(t.principal_amount) FROM loan_disbursements t WHERE t.officer_id = a.officer_id AND t.disburse_date >= '2025-01-01' AND t.disburse_date < '2026-01-01'), 0) AS s25, (SELECT q.target_principal FROM portfolio_quotas q WHERE q.officer_id = a.officer_id AND q.quota_year = 2025) AS q25, EXISTS (SELECT 1 FROM loan_officers sub WHERE sub.approver_id = a.officer_id) AS is_b FROM loan_officers a), B AS (SELECT *, CASE WHEN q25 IS NOT NULL AND s25 > q25 THEN s25 * 0.10 ELSE 0.0 END AS xmoney FROM M) SELECT officer_id, officer_name, xmoney, COALESCE(CASE WHEN is_b THEN retainer_salary + xmoney ELSE NULL END, retainer_salary) AS showcost FROM B;"
+  },
+  {
+    "question_id": "Q104",
+    "domain": "D3_BANKING",
+    "category": "C7_IIF_NVL_DIALECT",
+    "variation": "V4_TH_Formal",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "แสดง xmoney (10% หากเกินเป้า) และ showcost (หากมีลูกน้องให้บวก xmoney หากไม่มีใช้ค่าเริ่มต้น)",
+    "gold_sql": "WITH M AS (SELECT a.officer_id, a.officer_name, a.retainer_salary, COALESCE((SELECT SUM(t.principal_amount) FROM loan_disbursements t WHERE t.officer_id = a.officer_id AND t.disburse_date >= '2025-01-01' AND t.disburse_date < '2026-01-01'), 0) AS s25, (SELECT q.target_principal FROM portfolio_quotas q WHERE q.officer_id = a.officer_id AND q.quota_year = 2025) AS q25, EXISTS (SELECT 1 FROM loan_officers sub WHERE sub.approver_id = a.officer_id) AS is_b FROM loan_officers a), B AS (SELECT *, CASE WHEN q25 IS NOT NULL AND s25 > q25 THEN s25 * 0.10 ELSE 0.0 END AS xmoney FROM M) SELECT officer_id, officer_name, xmoney, COALESCE(CASE WHEN is_b THEN retainer_salary + xmoney ELSE NULL END, retainer_salary) AS showcost FROM B;"
+  },
+  {
+    "question_id": "Q105",
+    "domain": "D3_BANKING",
+    "category": "C7_IIF_NVL_DIALECT",
+    "variation": "V5_TH_Idiomatic",
+    "language": "EN",
+    "is_seed_21": false,
+    "question": "คำนวณ xmoney 10% คนทะลุเป้า และ showcost ถ้าเป็นหัวหน้าให้บวก xmoney ถ้าไม่ใช่ให้ใช้เงินตั้งต้น",
+    "gold_sql": "WITH M AS (SELECT a.officer_id, a.officer_name, a.retainer_salary, COALESCE((SELECT SUM(t.principal_amount) FROM loan_disbursements t WHERE t.officer_id = a.officer_id AND t.disburse_date >= '2025-01-01' AND t.disburse_date < '2026-01-01'), 0) AS s25, (SELECT q.target_principal FROM portfolio_quotas q WHERE q.officer_id = a.officer_id AND q.quota_year = 2025) AS q25, EXISTS (SELECT 1 FROM loan_officers sub WHERE sub.approver_id = a.officer_id) AS is_b FROM loan_officers a), B AS (SELECT *, CASE WHEN q25 IS NOT NULL AND s25 > q25 THEN s25 * 0.10 ELSE 0.0 END AS xmoney FROM M) SELECT officer_id, officer_name, xmoney, COALESCE(CASE WHEN is_b THEN retainer_salary + xmoney ELSE NULL END, retainer_salary) AS showcost FROM B;"
+  }
+]
